@@ -39,7 +39,7 @@ while(my $line = <STDIN>){
 	#chr10:10000873-10001472        CCC     1       10001056:10001082:10001168
 	my @tmp =  split /\t/, $line;
 	my ($hapString, $hapCount) = ($tmp[1], $tmp[2]);
-	next if(length($hapString) < $minLength);
+	next if(scalar(@tmp) < 3);
 	my ($chr, $start, $end) = split /[:-]/, $tmp[0];
 	$tmp[3] =~ s/,/:/g;
 	my @posList = split ":", $tmp[3];

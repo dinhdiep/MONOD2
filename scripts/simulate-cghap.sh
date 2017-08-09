@@ -19,8 +19,8 @@
 ################# Modify the following paths and variables ######################
 #################################################################################
 
-numsimulation=2
-n1=1000
+numsimulation=20
+n1=1000000
 
 cctfastq="BAMfiles/CCT.readIDs.txt"
 lctfastq="BAMfiles/LCT.readIDs.txt"
@@ -30,7 +30,7 @@ cctbam="BAMfiles/CCT.bam"
 lctbam="BAMfiles/LCT.bam"
 ncpbam="BAMfiles/NCP.bam"
 
-allcpgs="allcpg/hg19.fa.allcpgs.txt.gz"
+cpgs="allcpg/hg19.fa.allcpgs.txt.gz"
 
 
 ################ DO NOT MODIFY BELOW THIS LINE ##################################
@@ -49,10 +49,6 @@ echo -e "minFraction\tforeground\tbackground" > cct.hapinfo.list_$numsimulation
 echo -e "minFraction\tforeground\tbackground" > lct.hapinfo.list_$numsimulation
 echo "" > NCP_simulation/empty.hapinfo.txt
 
-zcat $allcpgs > Simulated/allcpgs
-
-cpgs="Simulated/allcpgs"
-
 for i in `seq 1 1 $numsimulation`
 do
 
@@ -61,8 +57,8 @@ do
   samtools view -Sb -t BAMfiles/hg19.fa.fai Simulated/${outprefix}.sam > Simulated/${outprefix}.bam
   $scripts_dir/bam2cghap.sh $cpgs Simulated/${outprefix}.bam NCP_simulation/${outprefix}
 
-  echo -e "0.00\tNCP_simulation/${outprefix}.bam.cgPE.hapinfo.txt\tNCP_simulation/empty.hapinfo.txt" >> cct.hapinfo.list_$numsimulation
-  echo -e "0.00\tNCP_simulation/${outprefix}.bam.cgPE.hapinfo.txt\tNCP_simulation/empty.hapinfo.txt" >> lct.hapinfo.list_$numsimulation
+  echo -e "0.00\tNCP_simulation/${outprefix}.cgPE.hapinfo.txt\tNCP_simulation/empty.hapinfo.txt" >> cct.hapinfo.list_$numsimulation
+  echo -e "0.00\tNCP_simulation/${outprefix}.cgPE.hapinfo.txt\tNCP_simulation/empty.hapinfo.txt" >> lct.hapinfo.list_$numsimulation
 
   for x in 0.01 0.05 0.10 0.20 
   do
@@ -82,11 +78,11 @@ do
 
     $perlcode_dir/sample_reads_from_fqnames.pl $cctfastq $cctbam $n3 > Simulated/${outprefix2}.sam
     samtools view -Sb -t BAMfiles/hg19.fa.fai Simulated/${outprefix2}.sam > Simulated/${outprefix2}.bam
-    $scripts_dir/bam2cghap.sh $cpgs Simulated/${outprefix2}.bam CCT_simulation/${outprefix2}
+    $scripts_dir/bam2cghap.sh $cpgs Simulated/${outprefix2}.bam LCT_simulation/${outprefix2}
 
     $perlcode_dir/sample_reads_from_fqnames.pl $lctfastq $lctbam $n3 > Simulated/${outprefix3}.sam
     samtools view -Sb -t BAMfiles/hg19.fa.fai Simulated/${outprefix3}.sam > Simulated/${outprefix3}.bam
-    $scripts_dir/bam2cghap.sh $cpgs Simulated/${outprefix3}.bam LCT_simulation/${outprefix3}
+    $scripts_dir/bam2cghap.sh $cpgs Simulated/${outprefix3}.bam CCT_simulation/${outprefix3}
 
   done
 

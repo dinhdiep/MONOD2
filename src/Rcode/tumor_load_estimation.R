@@ -3,6 +3,17 @@ library(gplots)
 
 # This script takes as input the MHL matrix, compute cancer markers using the t-test, build a standard curve from simulated samples, and estimates the cancer proportion in plasma samples using the cancer regions
 
+args <- commandArgs(trailingOnly = TRUE)
+rdata.file <- args[1]
+num.sims <- as.numeric(args[2])
+ref_CCT_haploInfo <- args[3]
+ref_LCT_haploInfo <- args[4]
+ncp_train_list <- args[5]
+perlcode_dir <- args[6]
+
+# range for standard curve (must match hapinfo list file)
+ct.range <- c("0.20", "0.10", "0.05", "0.01", "0.00")
+
 ######################
 ### PlotFunctions ####
 ######################
@@ -104,7 +115,7 @@ HaplotypeMixing <- function(range, numSims=3, mixingHapFiles, simulation.directo
   write(gsub(":", "\t", rownames(markers.info)), file=markers.file, sep="\n")
 
   # Command to run a perl script to perform hapinfo file merging to subset of markers region
-  merge.cmd.part2 <- sprintf(" | perl mergeHaploInfo_bed.pl %s > ", markers.file)
+  merge.cmd.part2 <- sprintf(" | perl %s/mergeHaploInfo_bed.pl %s > ", perlcode_dir, markers.file)
 
   # make a list file for all of the mixture files that will be generated
   write.table(paste0(simulation.directory,"/ct_", c(1:numSims),".hapInfo.txt"), file=paste0(simulation.directory,"/list_hapInfo"), quote=F,col=F,row=F)
@@ -117,12 +128,13 @@ HaplotypeMixing <- function(range, numSims=3, mixingHapFiles, simulation.directo
     for(i in c(1:numSims)){
       simulate.name <- paste0(simulation.directory, "/ct_", i, ".hapInfo.txt")
       merge.cmd <- paste0("cat ", mixingHapFiles$foreground[ hap.ids.list[i] ], " ", mixingHapFiles$background[ hap.ids.list[i] ], merge.cmd.part2, simulate.name)
+      #print(merge.cmd)
       try(system(merge.cmd))
     }
     
     # generate the mixture matrix
-    mhl.matrix.cmd <- paste0("perl hapinfo2mhl.pl ", simulation.directory, "/list_hapInfo > ", simulation.directory, "/simulation.mhl.matrix")
-    amf.matrix.cmd <- paste0("perl hapinfo2amf.pl ", simulation.directory, "/list_hapInfo > ", simulation.directory, "/simulation.amf.matrix")
+    mhl.matrix.cmd <- sprintf("perl %s/hapinfo2mhl.pl %s/list_hapInfo > %s/simulation.mhl.matrix", perlcode_dir, simulation.directory, simulation.directory)
+    amf.matrix.cmd <- sprintf("perl %s/hapinfo2amf.pl %s/list_hapInfo > %s/simulation.amf.matrix", perlcode_dir, simulation.directory, simulation.directory)
     
     try(system(mhl.matrix.cmd)) # System call to hapinfo2mhl.pl perl script
     mhl <- read.table(paste0(simulation.directory,"/simulation.mhl.matrix"),T,row=1)
@@ -196,11 +208,8 @@ identify.tumor.markers <- function(data, tumor.samples, normal.samples, FDR=1e-5
 ##### Inputs    ######
 ######################
 
-load('3_wgbs_rrbs_plusnewfixed_clean_data.Rdata')
+load(rdata.file)
 
-# Provide paths to simulation files
-ref_CCT_haploInfo <- "cct.hapinfo.list20"
-ref_LCT_haploInfo <- "lct.hapinfo.list20"
 simulation_CCT_dir <- "CCT_mixture"
 simulation_LCT_dir <- "LCT_mixture"
 
@@ -221,11 +230,6 @@ max.plasma.missing <- 0.3
 # Filter fold change of cancer over normal
 min.diff <- 0.3
 
-# number of simulations
-num.sims <- 3 #20
-# range for standard curve (must match hapinfo list file)
-ct.range <- c("0.20", "0.10", "0.05", "0.01", "0.00")
-
 
 rrbs.dat <- orig.data$rrbs.dat
 rrbs.meta <- orig.data$rrbs.meta
@@ -239,7 +243,7 @@ print("Training colon cancer tissue samples")
 print(colnames(rrbs.dat)[cct.idx])
 
 # Subset training samples
-training.ncp.samples <- read.table("subset_normal_plasma_training", header=F, stringsAsFactors=F)$V1 
+training.ncp.samples <- read.table(ncp_train_list, header=F, stringsAsFactors=F)$V1 
 training.ncp.samples <- make.names(training.ncp.samples)
 training.ncp.idx <- which( rrbs.meta$Sample %in% training.ncp.samples )
 print("Training normal plasma samples")
@@ -315,6 +319,7 @@ lung.mhl.sem <- apply(MHL.simulatedStdValues.lung,2,function(x)sd(x,na.rm=T)/sqr
 
 std.curves <- data.frame(colon.mhl.avg, colon.mhl.sem, lung.mhl.avg, lung.mhl.sem)
 rownames(std.curves)<-ct.range
+write.table(std.curves, "standard_curves_values.txt", quote=F, sep="\t")
 
 # Print fraction of plasma samples out of range of std curve
 print(sum(apply(lung.results, 1, anyNA))/nrow(lung.results))

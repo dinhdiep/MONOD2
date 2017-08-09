@@ -15,6 +15,12 @@ library(abind)
 
 OUTLIERS <- c('CRC.T.4.2014')
 
+args <- commandArgs(trailingOnly = TRUE)
+myrrbs.file <- args[1]
+mywgbs.file <- args[2]
+myrrbs.meta.file <- args[3]
+mywgbs.meta.file <- args[4]
+name.rdata <- args[5]
 
 ######
 # LOADING DATA
@@ -30,8 +36,8 @@ gen.data <- function(rrbs.meta.file = "RRBS.getHaplo.sampleInfo.txt",
   rrbs.meta <- read.table(rrbs.meta.file, header = T, sep='\t', stringsAsFactors = F)
   wgbs.meta <- read.table(wgbs.meta.file, sep ='\t', header=T, stringsAsFactors = F)
   
-  rrbs.dat <- read.table(rrbs.file, sep='\t', header=T, row.names=1)
-  wgbs.dat <- read.table(wgbs.file, sep='\t', header=T, row.names=1)
+  rrbs.dat <- read.table(gzfile(rrbs.file), sep='\t', header=T, row.names=1)
+  wgbs.dat <- read.table(gzfile(wgbs.file), sep='\t', header=T, row.names=1)
   
   rrbs.meta$Cancer.Origin <- rrbs.meta$Tissue ## rename this
   
@@ -177,14 +183,9 @@ gen.data <- function(rrbs.meta.file = "RRBS.getHaplo.sampleInfo.txt",
 
 #### Run to generate imputed matrices ####
 
-myrrbs.file = "RRBS_170609.gethaplo.mhl.mhbs1.0.useSampleID.txt"
-mywgbs.file = "WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt"
-myrrbs.meta.file = "RRBS.getHaplo.sampleInfo.txt"
-mywgbs.meta.file = "WGBS.getHaplo.sampleInfo.txt"
-
 orig.data <- gen.data(rrbs.file = myrrbs.file,
                       wgbs.file = mywgbs.file,
                       rrbs.meta.file = myrrbs.meta.file, 
                       wgbs.meta.file = mywgbs.meta.file)
 
-save.image("wgbs_rrbs_plusnewfixed_clean_data.Rdata")
+save.image(name.rdata)
