@@ -145,6 +145,13 @@ Analysis cannot be performed across RRBS and WGBS datasets due to techical artif
 3. WGBS MHL matrix: ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt
 4. RRBS MHL matrix: ng.3805/RRBS_170609.gethaplo.mhl.mhbs1.0.useSampleID.txt
 
+Usage info
+
+```
+preprocess.sh [rrbs.matrix.gz] [wgbs.matrix.gz] [rrbs.meta] [wgbs.meta] [output Rdata name]
+
+```
+
 Run example
 
 ```
