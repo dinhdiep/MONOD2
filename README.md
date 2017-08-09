@@ -129,7 +129,7 @@ The only requirements for (1) and (2) are that the region indices and the sample
 Run example
 
 ```
-./scripts/mhl_vs_amf.sh
+Rscript src/Rcode/mhl_vs_amf.R ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt.gz ng.3805/WGBS.getHaplo.amf.mhbs.rmdup_consistent.useSampleID.txt.gz ng.3805/RRBS_MHBs.sorted.DMR.withID.bed
 
 ```
 
@@ -189,7 +189,14 @@ Run example
 
 ```
 
-There should be many simulated files generated including two list files: (1) cct.hapinfo.list_20 (2) lct.hapinfo.list_20 which are required as input to the next step. The should also be three directories (1) CCT_simulation (2) LCT_simulation and (3) NCP_simulation which contain simulated data for each sample type.
+There should be many simulated files generated including two list files.
+1. cct.hapinfo.list_20 
+2. lct.hapinfo.list_20 
+
+The should also be three directories which contain simulated data for each sample type.
+1. CCT_simulation 
+2. LCT_simulation 
+3. NCP_simulation
 
 Finally, we can run features selection and tumor load estimation using the simulated data files. The script for tumor load estimation have the following usage.
 
@@ -205,7 +212,7 @@ Run example
 
 ```
 
-The output files are as follows.
+The output files are as follows. 
 
 1. The Rdata which saves all the outputs : Tumor_load_estimation.Rdata
 2. Boxplots similar to Figure 4d from Guo et al. 2017 which shows the estimated tumor proportions for the plasma samples: estimated_proportions.pdf
@@ -218,10 +225,29 @@ The output files are as follows.
 
 ### Plasma prediction
 
+To perform plasma prediction, we asked if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the following analyses, we use the 
+
 Run example
 
 ```
-./scripts/analyze-cf-dna.sh
+Rscript src/Rcode/plasma_prediction.R wgbs_rrbs_clean.Rdata
 
 ```
 
+The resulting AUCs and confusion matrix are printed to screen while AUC curves are generated in an Rplots.pdf file.
+
+```
+$mauc
+[1] 0.7770558
+
+$auc
+    Colon      Lung    Normal
+0.7250000 0.7505669 0.8556005
+
+          Reference
+Prediction Colon Lung Normal
+    Colon      5    4      1
+    Lung       3    6      0
+    Normal    10    5     24
+
+```

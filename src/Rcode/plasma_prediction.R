@@ -6,6 +6,9 @@ library(caret)
 library(compiler)
 library(ROCR)
 
+args <- commandArgs(trailingOnly = TRUE)
+rdata.file <- args[1]
+
 #### Functions: Run this code block first ####
 
 # Unit normalization
@@ -120,7 +123,7 @@ plot.roc <- function(scores, hits, title, max.fdr = 1.0) {
 #### Load matrices and metadata ####
 
 # Load processed and imputed data using an RData file
-load('wgbs_rrbs_plusnewfixed_clean_data.Rdata')
+load(rdata.file)
 
 # # Uncomment below to redo pre-processing and imputation on raw matrices
 # source("preprocess_data.R")
