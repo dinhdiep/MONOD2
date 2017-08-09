@@ -1,3 +1,5 @@
+args <- commandArgs(trailingOnly = TRUE)
+
 library(ggplot2)
 library(compiler)
 
@@ -48,7 +50,7 @@ gsi <- cmpfun(gsi) # Compile gsi function for faster runtime
 ## using simple options or by a user supplied function
 ## 2. with the now resahped data the plot, the chosen labels and plot style are built
 ggheat <- function(m, rescaling = 'none', clustering = 'none', labCol = T, labRow = T, border = F, 
-                   heatscale = c(low = 'skyblue', mid = 'white', high = 'tomato'), legend.title = NULL) {
+                   heatscale = c(low = 'skyblue', mid = 'white', high = 'tomato'), legend.title = NULL, title="Heatmap") {
   require(reshape)
   require(ggplot2)
   
@@ -113,7 +115,7 @@ ggheat <- function(m, rescaling = 'none', clustering = 'none', labCol = T, labRo
   
   g2 = g2 + theme(panel.grid.minor = element_line(colour=NA), panel.grid.major = element_line(colour=NA),
                   panel.background = element_rect(fill=NA, colour=NA), axis.text.x = element_text(angle = 90, hjust = 1),
-                  axis.ticks = element_blank())
+                  axis.ticks = element_blank()) + ggtitle(title)
   
   ## finally add the fill colour ramp of your choice (default is blue to red)-- and return
   return(g2+scale_fill_gradient2(low = heatscale[1], mid = heatscale[2], high = heatscale[3], guide = guide_colorbar(title = legend.title)))
@@ -121,12 +123,12 @@ ggheat <- function(m, rescaling = 'none', clustering = 'none', labCol = T, labRo
 
 
 # Load datasets
-wgbs.mhl.file <- "WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt"
-wgbs.amf.file <- "WGBS.getHaplo.amf.mhbs1.0.rmdup_consistent.useSampleID.txt"
-dmr.bed.file <- "RRBS_MHBs.sorted.DMR.withID.bed"
+wgbs.mhl.file <- args[1]
+wgbs.amf.file <- args[2]
+dmr.bed.file <- args[3]
 
-wgbs_mhl_data <- read.table(wgbs.mhl.file, sep = "\t", header = T, row.names = 1)
-wgbs_amf_data <- read.table(wgbs.amf.file, sep = "\t", header = T, row.names = 1)
+wgbs_mhl_data <- read.table(gzfile(wgbs.mhl.file), sep = "\t", header = T, row.names = 1)
+wgbs_amf_data <- read.table(gzfile(wgbs.amf.file), sep = "\t", header = T, row.names = 1)
 
 # Define samples we want to use
 adult_stl_samples <- c('STL002SB-01.allchrs.sorted.clipped.bam.mhbs', 'STL003SB-01.allchrs.sorted.clipped.bam.mhbs', 
@@ -177,8 +179,8 @@ gsi.df <- gsi.df[order(gsi.df$GSI, decreasing = T),]
 top.gsi.df <- Reduce(rbind, by(gsi.df, gsi.df["group"], head, n = 150))
 
 # Generate heatmaps
-ggheat(as.matrix(wgbs_mhl_data[top.gsi.df$region,]), labCol = T, labRow = F)
-ggheat(as.matrix(wgbs_amf_data[top.gsi.df$region,]), labCol = T, labRow = F)
+ggheat(as.matrix(wgbs_mhl_data[top.gsi.df$region,]), labCol = T, labRow = F, title="MHL")
+ggheat(as.matrix(wgbs_amf_data[top.gsi.df$region,]), labCol = T, labRow = F, title="AMF")
 
 # Quantitative signal to noise analysis by looking at ratio of diagonal to off-diagonal values
 amf_snr <- rep(0, nrow(top.gsi.df))
@@ -204,7 +206,14 @@ for (i in 1:nrow(top.gsi.df)) {
 
 # Visualize MHL signal to noise vs AMF signal to noise
 gg.df <- data.frame(mhl_snr, amf_snr)
-ggplot(gg.df, aes(amf_snr, mhl_snr)) + geom_point() +
+ggplot(gg.df, aes(amf_snr, mhl_snr)) + geom_point(col='slateblue') +
   theme_classic() + theme(legend.position="none", text = element_text(size = 12)) +
-  xlab("AMF Signal to Noise Ratio") + ylab("MHL Signal to Noise Ratio") + geom_abline(slope = 1, intercept = 0) + 
-  scale_y_log10() + scale_x_log10()
+  xlab("AMF Signal to Noise Ratio") + ylab("MHL Signal to Noise Ratio") + geom_abline(slope = 1, intercept = 0, col='seagreen4') + 
+   scale_x_log10(
+   lim = c(0.1, 1.1e3),
+   breaks = scales::trans_breaks("log10", function(x) 10^x),
+   labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+ scale_y_log10(
+   lim = c(0.1, 1.1e3),
+   breaks = scales::trans_breaks("log10", function(x) 10^x),
+   labels = scales::trans_format("log10", scales::math_format(10^.x)))

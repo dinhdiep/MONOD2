@@ -1,0 +1,98 @@
+Sample ID	Study 	Study Accession Project ID	BIOSAMPLE ID	Type	Source	Tissue Type	Tissue age
+adult_CD14_cells	Broad Institute	SRP000996	SAMN02252540	normal	primary	blood	adult
+adult_CD3_cells	Broad Institute	SRP000996	SAMN02252542	normal	primary	blood	adult
+adult_CD56_cells	Broad Institute	SRP000996	SAMN02252538	normal	primary	blood	adult
+BS.seq.P1.N	Chen et al. 2016 Cancer Research	SRP049710	SAMN03198264	normal	primary	kidney	adult
+BS.seq.P1.T	Chen et al. 2016 Cancer Research	SRP049710	SAMN03198259	cancer	primary	kidney	adult
+BS.seq.P2.N	Chen et al. 2016 Cancer Research	SRP049710	SAMN03198265	normal	primary	kidney	adult
+BS.seq.P2.T	Chen et al. 2016 Cancer Research	SRP049710	SAMN03198263	cancer	primary	kidney	adult
+CD19_cells	Broad Institute	SRP000996	SAMN02252545	normal	primary	blood	adult
+centenarian	Heyn et al. 2010	SRP007820	SAMN00709113	normal	primary	blood	adult
+Colon_Primary_Normal	Ziller et al. 2010	SRP028600	SAMN02313887	normal	primary	colon	adult
+Colon_Tumor_Primary	Ziller et al. 2010	SRP028600	SAMN02313886	cancer	primary	colon	adult
+Frontal_cortex_AD_1	Ziller et al. 2010	SRP028600	SAMN02313883	azheimers	primary	neural	adult
+Frontal_cortex_AD_2	Ziller et al. 2010	SRP028600	SAMN02313884	azheimers	primary	neural	adult
+Frontal_cortex_normal_1	Ziller et al. 2010	SRP028600	SAMN02313881	normal	primary	neural	adult
+Frontal_cortex_normal_2	Ziller et al. 2010	SRP028600	SAMN02313880	normal	primary	neural	adult
+HCT116	Blattler et al. 2014	SRP045269	 SAMN02952114	cancer	cell lines	colon	NA
+Indx01	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557041	normal	primary	neural	adult
+Indx02	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04558104	normal	primary	colon	adult
+Indx03	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557042	normal	primary	neural	adult
+Indx04	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557043	normal	primary	heart	adult
+Indx05	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557047	normal	primary	small intestine	adult
+Indx06	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557044	normal	primary	liver	adult
+Indx07	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557045	normal	primary	lung	adult
+Indx08	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557048	normal	primary	muscle	adult
+Indx21	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557046	normal	primary	pancreas	adult
+Indx22	Guo et al. 2017 Nature Genetics	SRP071841	SAMN04557049	normal	primary	stomach	adult
+methylC.seq_h1_mesendoderm_r1	Xie et al. 2013 Cell	SRP000941	SAMN00739304	progenitor	cell line	stem	NA
+methylC.seq_h1_mesendoderm_r2	Xie et al. 2013 Cell	SRP000941	SAMN00739305	progenitor	cell line	stem	NA
+methylC.seq_h1_r1	Xie et al. 2013 Cell	SRP000941	SAMN00004461	progenitor	cell line	stem	NA
+methylC.seq_h1_r2	Xie et al. 2013 Cell	SRP000941	SAMN00004462	progenitor	cell line	stem	NA
+methylC.seq_h1.msc_r1	Xie et al. 2013 Cell	SRP000941	SAMN00774087	progenitor	cell line	stem	NA
+methylC.seq_h1.msc_r2	Xie et al. 2013 Cell	SRP000941	SAMN00774088	progenitor	cell line	stem	NA
+methylC.seq_h1.npc_r1	Xie et al. 2013 Cell	SRP000941	SAMN00215949	progenitor	cell line	stem	NA
+methylC.seq_h1.npc_r2	Xie et al. 2013 Cell	SRP000941	SAMN00215950	progenitor	cell line	stem	NA
+methylC.seq_h1.bmp4_r1	Xie et al. 2013 Cell	SRP000941	SAMN00114946	progenitor	cell line	stem	NA
+methylC.seq_h1.bmp4_r2	Xie et al. 2013 Cell	SRP000941	SAMN00114947	progenitor	cell line	stem	NA
+middle.age	Heyn et al. 2010	SRP007820	SAMN00765484	normal	primary	blood	adult
+Mobilized_CD34_cells	Broad Institute	SRP000996		normal	primary	blood	adult
+new.born	Heyn et al. 2010	SRP007820	SAMN00709114	normal	primary	blood	child
+SRX381553_normal_colon	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404754	normal	primary	colon	adult
+SRX381569_tumor_colon	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404756	cancer	primary	colon	adult
+SRX381585_metastasis_colon	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404755	cancer	primary	colon	adult
+SRX381601_tumor_prostate	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404747	cancer	primary	prostate	adult
+SRX381611_metastasis_breast	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404748	cancer	primary	breast	adult
+SRX381621_tumor_breast	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404749	cancer	primary	breast	adult
+SRX381631_normal_breast	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404752	normal	primary	breast	adult
+SRX381646_normal_prostate	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404766	normal	primary	prostate	adult
+SRX381661_tumor_liver	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404761	cancer	primary	liver	adult
+SRX381666_tumor_liver	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404762	cancer	primary	liver	adult
+SRX381671_normal_liver	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404760	normal	primary	liver	adult
+SRX381678_tumor_prostate	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404764	cancer	primary	prostate	adult
+SRX381693_normal_brain_grey	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404750	normal	primary	neural	adult
+SRX381697_tumor_neuroblastoma	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404767	cancer	primary	neural	adult
+SRX381701_tumor_glioblastoma	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404768	cancer	primary	neural	adult
+SRX381706_normal_brain_white	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404751	normal	primary	neural	adult
+SRX381710_normal_placenta	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404765	normal	primary	placenta	fetal
+SRX381713_normal_lung	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404763	normal	primary	lung	adult
+SRX381716_adenocarcinoma_lung	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404757	cancer	primary	lung	adult
+SRX381719_squamous_cell_tumor_lung	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404758	cancer	primary	lung	adult
+SRX381722_small_cell_tumor_lung	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404759	cancer	primary	lung	adult
+SRX381725_normal_CD19	Heyn et al. 2016 Genome Biology	SRP033252	SAMN02404753	normal	primary	blood	adult
+STL001BL.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01881275	normal	primary	bladder	child
+STL001FT.01	Schultz et al. 2015 Nature 	SRP000941	SAMN02028525	normal	primary	fat	child
+STL001GA.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737661	normal	primary	stomach	child
+STL001LG.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737662	normal	primary	lung	child
+STL001LV.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847532	normal	primary	heart	child
+STL001PO.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737663	normal	primary	muscle	child
+STL001RV.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737664	normal	primary	heart	child
+STL001SB.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00849925	normal	primary	small intestine	child
+STL001SG.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00855407	normal	primary	colon	child
+STL001SX.01	Schultz et al. 2015 Nature 	SRP000941	SAMN02028526	normal	primary	spleen	child
+STL001TH.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01085432	normal	primary	thymus	child
+STL002AD.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737665	normal	primary	kidney	adult
+STL002AO.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737666	normal	primary	vessel	adult
+STL002EG.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737667	normal	primary	esophagus	adult
+STL002FT.01	Schultz et al. 2015 Nature 	SRP000941	SAMN02028527	normal	primary	fat	adult
+STL002GA.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737668	normal	primary	stomach	adult
+STL002LG.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00849926	normal	primary	lung	adult
+STL002OV.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01085433	normal	primary	ovary	adult
+STL002PA.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737669	normal	primary	pancreas	adult
+STL002PO.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737670	normal	primary	muscle	adult
+STL002SB.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737671	normal	primary	small intestine	adult
+STL002SX.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01737672	normal	primary	spleen	adult
+STL003AD.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00828739	normal	primary	kidney	adult
+STL003AO.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847533	normal	primary	vessel	adult
+STL003EG.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847535	normal	primary	esophagus	adult
+STL003FT.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847536	normal	primary	fat	adult
+STL003GA.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00849927	normal	primary	stomach	adult
+STL003LV.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847538	normal	primary	heart	adult
+STL003PA.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847539	normal	primary	pancreas	adult
+STL003PO.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847540	normal	primary	muscle	adult
+STL003RA.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847541	normal	primary	vessel	adult
+STL003RV.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00849928	normal	primary	heart	adult
+STL003SB.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847542	normal	primary	small intestine	adult
+STL003SG.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847543	normal	primary	colon	adult
+STL003SX.01	Schultz et al. 2015 Nature 	SRP000941	SAMN00847544	normal	primary	spleen	adult
+STL011LI.01	Schultz et al. 2015 Nature 	SRP000941	SAMN01881963	normal	primary	liver	adult
