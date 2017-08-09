@@ -50,11 +50,11 @@ MONOD2 is based on the idea described in Guo et al. 2017 Nature Genetics (doi:10
 
 1. The original code for Figure 2 was not producing the correct values from the Figure. Note that there are two errors in Figure 2 as follows: the epipolymorphism for panel 4 should be 0.9375 (the published figure have 0.375 due to mis-editing), the MHL value for panel 5 should be 0.1167 (the published figure have a rounded up value of 0.1200).  
 
-2. The original comparison of AMF versus MHL at tissue specific regions were unfair because they used differentially methylated regions identified by MHL. In `MONOD2` we use only the MHB regions overlapping with published tissue specific DMRs to compare AMF versus MHL.
+2. The original comparison of AMF versus MHL at tissue specific regions were unfair because they used differentially methylated regions identified by MHL. In MONOD2 we use only the MHB regions overlapping with published tissue specific DMRs to compare AMF versus MHL.
 
-3. The original method for tumor load estimation performed features selection without separation of test data (the plasma samples). In `MONOD2` we identified the features using a subset of 50 normal plasma only, and test on the remaining normal and cancer patient plasma samples.
+3. The original method for tumor load estimation performed features selection without separation of test data (the plasma samples). In MONOD2 we identified the features using a subset of 50 normal plasma only, and test on the remaining normal and cancer patient plasma samples.
 
-4. The original method for methylation haplotype load analysis of cf-DNA did not have proper separation of training and test data for features selection although in model building the training and test data were separated. We realized that this would heavily bias the results to the sample set. In `MONOD2` we separated training and test data for both features selection and model building.
+4. The original method for methylation haplotype load analysis of cf-DNA did not have proper separation of training and test data for features selection although in model building the training and test data were separated. We realized that this would heavily bias the results to the sample set. In MONOD2 we separated training and test data for both features selection and model building.
 
 ## Usage
 
@@ -147,7 +147,7 @@ Analysis cannot be performed across RRBS and WGBS datasets due to techical artif
 
 Run example
 
-````
+```
 ./scripts/preprocess.sh ng.3805/RRBS_170609.gethaplo.mhl.mhbs1.0.useSampleID.txt.gz ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt.gz ng.3805/RRBS.getHaplo.sampleInfo.txt ng.3805/WGBS.getHaplo.sampleInfo.txt wgbs_rrbs_clean.Rdata
 
 ```
