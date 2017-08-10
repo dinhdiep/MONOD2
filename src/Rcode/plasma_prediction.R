@@ -1,3 +1,4 @@
+library(MASS)
 library(earth)
 library(skmeans)
 library(ggplot2)
@@ -229,11 +230,21 @@ rrbs.ensemble.model <- lapply(marker.index, function(idx) {
 })
 
 
+rrbs.train.res <- lapply(1:N.MODELS, function(i) {
+  idx <- marker.index[[i]]
+  # For each sample, calculate the log-odds of the sample belonging to each tissue type (lung, normal, cancer)
+  test.scores <- predict(rrbs.ensemble.model[[i]], rrbs.train.dat[,idx])
+  rownames(test.scores) <- rownames(rrbs.train.dat)
+  test.scores
+})
+
+combined.train.scores <- Reduce("+", rrbs.train.res)/N.MODELS
+lda.fit <- lda(combined.train.scores, rrbs.train.labels)
+
 final.marker.list <- sort(table(do.call(c, lapply(rrbs.ensemble.model, get.features))))
 write.table(final.marker.list, file="final.marker.list.txt", sep="\t", quote=F)
 
-save(rrbs.ensemble.model, file="final.ensemble.model.Rdata")
-
+save(rrbs.ensemble.model, lda.fit, file="final.ensemble.model.Rdata")
 
 
 # Test ensemble model on held out test data
@@ -264,11 +275,9 @@ tissue.perf <- lapply(colnames(combined.test.scores), function(ts) {
 })
 names(tissue.perf) <- colnames(combined.test.scores)
 
-# Create confusion matrix for multiclass prediction
-multiclass.scores <- scale(combined.test.scores) # Scale each individual tissue score so we can compare them to each other
-test.predictions <- apply(multiclass.scores, 1, function(x) names(x)[which.max(x)])
+lda.test.class <- predict(lda.fit, combined.test.scores)$class
 
-confusion.mat.res <- caret::confusionMatrix(factor(true.labels), factor(test.predictions))
+confusion.mat.res <- caret::confusionMatrix(factor(true.labels), factor(lda.test.class))
 confusion.mat <- confusion.mat.res$table
 print(confusion.mat)
 

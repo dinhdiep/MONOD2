@@ -8,7 +8,7 @@ email: hdinhdp@gmail.com
 
 ## Download
 
-You can use git to download the entire toolkit. 
+You can use git to download the entire codebase and datasets. 
 
 ```
 git clone https://github.com/dinhdiep/MONOD2
@@ -231,7 +231,7 @@ The output files are as follows.
 
 ### Plasma prediction
 
-To perform plasma prediction, we asked if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the provided code, a random sample of 20 colon cancer plasma, 20 lung cancer plasma, and 30 healthy plasma were used to train an ensemble MARS (Multivariate Adaptive Regression Splines) model using the `earth` R package. 
+To perform plasma prediction, we asked if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the provided code, a random sample of 20 colon cancer plasma, 20 lung cancer plasma, and 30 healthy plasma were used to train an ensemble MARS (Multivariate Adaptive Regression Splines) model (R `earth` package). Multiclass prediction is performed by a linear discriminant model on prediction scores. The linear discriminant model was built using the prediction scores of training data. 
 
 Run example
 
@@ -252,15 +252,17 @@ $auc
 
           Reference
 Prediction Colon Lung Normal
-    Colon      5    4      1
+    Colon      4    4      2
     Lung       3    6      0
-    Normal    10    5     24
+    Normal     4    5     30
 
 ```
 
 The model related files
 
 1. List of features. The final ensemble model have 154 unique features only: final.marker.list.txt 
-2. Saved Rdata of the ensemble model: final.ensemble.model.Rdata
+2. Saved Rdata of the final model: final.ensemble.model.Rdata
+
+
 
  
