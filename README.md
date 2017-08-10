@@ -1,5 +1,5 @@
 # MONOD2
-MONOD2 is a toolkit for methylation haplotype analysis for bisulfite sequencing or (BS-seq) data using high-throughput sequencing.  The analysis can be divided into three parts. First sequence alignment files are analyzed to generate methylation haplotypes which includes haplotype strings and haplotype counts for CpG positions with coverage.  Next, a collection of methylation haplotype files can be analyzed for identification of methylation haplotype blocks or for differential methylation haplotype load. Methylation haplotype blocks are regions with high linkage disequilibrium between pairs of CpGs and they were found to be enriched at transcription factor binding sites and enhancers. For differentialy methylation haplotype load analysis we provide two examples where tumor load estimation and plasma tissue of origin prediction can be performed on cf-DNA.  
+MONOD2 is a toolkit for methylation haplotype analysis for bisulfite sequencing or (BS-seq) data using high-throughput sequencing.  The analysis can be divided into three parts. First sequence alignment files are analyzed to generate methylation haplotypes which includes haplotype strings and haplotype counts for CpG positions with coverage.  Next, a collection of methylation haplotype files can be analyzed for identification of methylation haplotype blocks or for differential methylation haplotype load. Methylation haplotype blocks are regions with high linkage disequilibrium between pairs of CpGs and they were found to be enriched at transcription factor binding sites and enhancers. For differentially methylation haplotype load analysis we perform tumor load estimation and plasma tissue of origin prediction on the methylation haplotype load profile of cf-DNA.  
 
 MONOD2 is comprised of executable `bash`, `perl`, and `R` programs. No installation is necessary except for the required dependencies listed below.
 
@@ -8,7 +8,7 @@ email: hdinhdp@gmail.com
 
 ## Download
 
-You can use git to download the entire codebase and datasets. 
+You can use git to download the entire codebase and datasets. Only the processed datasets are provided here, please contact if you would like to get the BAM or methylation haplotype files. 
 
 ```
 git clone https://github.com/dinhdiep/MONOD2
