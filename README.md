@@ -52,7 +52,7 @@ MONOD2 is based on the idea described in Guo et al. 2017 Nature Genetics (doi:10
 
 1. The original code for Figure 2 was not producing the correct values from the Figure. Note that there are two errors in Figure 2 as follows: the epipolymorphism for panel 4 should be 0.9375 (the published figure have 0.375 due to mis-editing), the MHL value for panel 5 should be 0.1167 (the published figure have a rounded up value of 0.1200).  
 
-2. The original comparison of AMF versus MHL at tissue specific regions were unfair because they used differentially methylated regions identified by MHL. In MONOD2 we use the MHB regions overlapping with published tissue specific DMRs to make the comparison.
+2. The original comparison of AMF versus MHL at tissue specific regions were considered unfair because they used differentially methylated regions identified by MHL. In MONOD2 we use the MHB regions overlapping with published tissue specific DMRs to make the comparison.
 
 3. The original method for tumor load estimation performed features selection without separation of test data (the plasma samples). In MONOD2 we identified the features using a subset of 50 normal plasma, and then computed tumor load on the remaining normal and cancer patient plasma samples.
 
