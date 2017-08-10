@@ -1,7 +1,7 @@
 # MONOD2
-MONOD2 is a toolkit for methylation haplotype analysis for bisulfite sequencing or (BS-seq) data using high-throughput sequencing.  The analysis can be divided into three parts. First sequence alignment files are analyzed to generate methylation haplotypes which includes haplotype strings and haplotype counts for CpG positions with coverage.  Next, a collection of methylation haplotype files can be analyzed for identification of methylation haplotype blocks or for differential methylation haplotype load. 
+MONOD2 is a toolkit for methylation haplotype analysis for bisulfite sequencing or (BS-seq) data using high-throughput sequencing.  The analysis can be divided into three parts. First sequence alignment files are analyzed to generate methylation haplotypes which includes haplotype strings and haplotype counts for CpG positions with coverage.  Next, a collection of methylation haplotype files can be analyzed for identification of methylation haplotype blocks or for differential methylation haplotype load. Methylation haplotype blocks are regions with high linkage disequilibrium between pairs of CpGs and they were found to be enriched at transcription factor binding sites and enhancers. For differentialy methylation haplotype load analysis we provide two examples where tumor load estimation and plasma tissue of origin prediction can be performed on cf-DNA.  
 
-MONOD2 is comprised of executable `sh`, `perl`, and `R` programs. No installation is necessary except for the required dependencies listed below.
+MONOD2 is comprised of executable `bash`, `perl`, and `R` programs. No installation is necessary except for the required dependencies listed below.
 
 ## Contact
 email: hdinhdp@gmail.com
@@ -17,7 +17,7 @@ git clone https://github.com/dinhdiep/MONOD2
 
 ## Required R packages
 
-You can install all the R packages from command line in R with the following:
+You can install all the R packages from command line in R with the following code.
 
 ```
 require(gplots)
@@ -39,39 +39,43 @@ require(compiler)
 
 ```
 
-## Required pre-installed software
+## Required software
+
+The following two software must be installed.
 
 1. [samtools version 1.2 or above](http://samtools.sourceforge.net/)
 2. [bedtools version 2.26 or above](http://bedtools.readthedocs.io/en/latest/)
 
 ## Important Notes
 
-MONOD2 is based on the idea described in Guo et al. 2017 Nature Genetics (doi:10.1038/ng.3805). Here, we have made significant modifications from the original methods and codes that was hosted on the [Supplementary Website](http://genome-tech.ucsd.edu/public/MONOD_NG_TR44413). Some notable modifications are listed below:
+MONOD2 is based on the idea described in Guo et al. 2017 Nature Genetics (doi:10.1038/ng.3805). However, we have made modifications from the original methods and codes that was originally hosted on the [Supplementary Website](http://genome-tech.ucsd.edu/public/MONOD_NG_TR44413). A copy of the original processed data, code, and supplementary tables are available here as well in the ng.3805 directory. Some notable modifications are listed below:
 
 1. The original code for Figure 2 was not producing the correct values from the Figure. Note that there are two errors in Figure 2 as follows: the epipolymorphism for panel 4 should be 0.9375 (the published figure have 0.375 due to mis-editing), the MHL value for panel 5 should be 0.1167 (the published figure have a rounded up value of 0.1200).  
 
-2. The original comparison of AMF versus MHL at tissue specific regions were unfair because they used differentially methylated regions identified by MHL. In MONOD2 we use only the MHB regions overlapping with published tissue specific DMRs to compare AMF versus MHL.
+2. The original comparison of AMF versus MHL at tissue specific regions were unfair because they used differentially methylated regions identified by MHL. In MONOD2 we use the MHB regions overlapping with published tissue specific DMRs to make the comparison.
 
-3. The original method for tumor load estimation performed features selection without separation of test data (the plasma samples). In MONOD2 we identified the features using a subset of 50 normal plasma only, and test on the remaining normal and cancer patient plasma samples.
+3. The original method for tumor load estimation performed features selection without separation of test data (the plasma samples). In MONOD2 we identified the features using a subset of 50 normal plasma, and then computed tumor load on the remaining normal and cancer patient plasma samples.
 
-4. The original method for methylation haplotype load analysis of cf-DNA did not have proper separation of training and test data for features selection although in model building the training and test data were separated. We realized that this would heavily bias the results to the sample set. In MONOD2 we separated training and test data for both features selection and model building.
+4. The original method for classification of cf-DNA did not have proper separation of training and test data during features selection although in model building the training and test data were separated. We realized that this would heavily bias the results to the sample set. In MONOD2 we separated training and test data for both features selection and model building.
 
 ## Usage
 
 ### Extracting methylation haplotypes from sequence alignment files
 
-Sequence alignment files in BAM format should have the expected sam flags for Watson (forward) and Crick (reverse) strands. The code below will generate CpG haplotype files without clonal removal (any clonal remove must be done upstream).
+Sequence alignment files in BAM format should have the expected sam flags for Watson (forward) and Crick (reverse) strands. The code below will generate CpG haplotype files without clonal removal (any clonal removal must be performed upstream).
+
 ```
 bam2cghap.sh [cpg position file] [bam file] [output file prefix name]
 
 ```
 
 Run example
+
 ```
 ./scripts/bam2cghap.sh allcpg/cpg.small.txt.gz BAMfiles/Colon_primary_tumor_sept9_promoter.bam test
 
 ```
-The version 1 code is provided but user must specify RRBS or WGBS mode and can only use BAM that have been mapped to hg19. For RRBS and WGBS data are treated differently with the major difference in that reads which are considered clonal in WGBS would be removed in order to report only one haplotype.
+Version 1 code is provided but user must specify RRBS or WGBS mode and can only use BAM that have been mapped to hg19. RRBS and WGBS data are treated differently in that reads which are considered clonal in WGBS would be removed.
 
 Run RRBS example
 
@@ -104,7 +108,7 @@ Run example
 
 ### Identifying the methylation haplotype blocks 
 
-Methylation haplotypes were split into continuous mappable bins and then an algorithm greedily select the largest possible continuous region with a minimum linkage disequilibrium score to be considered methylation haplotype blocks. Blocks must have at least 3 CpGs sites. For more info about methylation linkage disequilibrium, please see [Shoemaker et al. 2010 Genome Research](http://genome.cshlp.org/content/20/7/883.full.pdf).
+Methylation haplotypes are split into continuous mappable bins and then an algorithm greedily selects the largest possible continuous region with a minimum linkage disequilibrium score to be considered methylation haplotype blocks. Blocks must have at least 3 CpGs sites. The original idea for methylation haplotype blocks were described in details by [Shoemaker et al. 2010 Genome Research](http://genome.cshlp.org/content/20/7/883.full.pdf).
 
 ```
 cghap2mhbs.sh [haplotype file] [target bed] [minimum LD R2 cutoff] [output name prefix]
@@ -119,10 +123,11 @@ Run example
 
 ### Compare AMF versus MHL 
 
-We can compare the signal to noise levels between a matrix calculated using the average methylation frequency (AMF) and a matrix calculated using the methylation haplotype load (MHL). The three required files are as followed.
+We can compare the signal to noise levels between a matrix calculated using the average methylation frequency (AMF) and a matrix calculated using the methylation haplotype load (MHL) to demonstrate the advantage of using MHL on heterogenous samples. The following files are required.
+
 1. WGBS MHL matrix. Example: ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt.gz
 2. WGBS AMF matrix. Example: ng.3805/WGBS.getHaplo.amf.mhbs1.0.rmdup_consistent.useSampleID.txt.gz
-3. The published DMRs file. Example: ng.3805/RRBS_MHBs.sorted.DMR.withID.bed
+3. List of MHBs overlapping with published DMRs. Example: ng.3805/RRBS_MHBs.sorted.DMR.withID.bed
 
 The only requirements for (1) and (2) are that the region indices and the sample IDs are the same between the two matrices. The region file (3) is a list of regions (subset of the region indices used to make the matrices). 
 
@@ -168,18 +173,18 @@ First, we generate the simulation files by merging a subset of normal plasma dat
 The script needs to be modified from within (using a text editor) in order to run user-provided read IDs and BAM files. The following lines as is will perform the analysis on the example read IDs and BAM files. 
 
 ```
-numsimulation=20 
-n1=1000000 
+numsimulation=20 # number of simulations to perform
+n1=1000000 # number of reads per simulation 
+ 
+cctfastq="BAMfiles/CCT.readIDs.txt" # path to the read IDs for colon tumor samples
+lctfastq="BAMfiles/LCT.readIDs.txt" # path to the read IDs for lung tumor samples
+ncpfastq="BAMfiles/NCP.readIDs.txt" # path to the read IDs for normal plasma training subset
 
-cctfastq="BAMfiles/CCT.readIDs.txt"
-lctfastq="BAMfiles/LCT.readIDs.txt"
-ncpfastq="BAMfiles/NCP.readIDs.txt"
+cctbam="BAMfiles/CCT.bam" # path to the merged BAM for colon tumor samples
+lctbam="BAMfiles/LCT.bam" # path to the merged BAM for lung tumor samples
+ncpbam="BAMfiles/NCP.bam" # path to the merged BAM for normal plasma training subset
 
-cctbam="BAMfiles/CCT.bam"
-lctbam="BAMfiles/LCT.bam"
-ncpbam="BAMfiles/NCP.bam"
-
-cpgs="allcpg/hg19.fa.allcpgs.txt.gz"
+cpgs="allcpg/hg19.fa.allcpgs.txt.gz" # path to the CpG positions file
 
 ```
 Run example
@@ -190,6 +195,7 @@ Run example
 ```
 
 There should be many simulated files generated including two list files.
+
 1. cct.hapinfo.list_20 
 2. lct.hapinfo.list_20 
 
@@ -198,7 +204,7 @@ The should also be three directories which contain simulated data for each sampl
 2. LCT_simulation 
 3. NCP_simulation
 
-Finally, we can run features selection and tumor load estimation using the simulated data files. The script for tumor load estimation have the following usage.
+Next, we can run features selection and tumor load estimation using the simulated data files. The script for tumor load estimation have the following usage.
 
 ```
 tumor_load_estimation.sh [rdata file] [colon cancer simulation table] [lung cancer simulation table] [list of normal plasma training samples] [number of simulations]
@@ -225,7 +231,7 @@ The output files are as follows.
 
 ### Plasma prediction
 
-To perform plasma prediction, we asked if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the following analyses, we use the 
+To perform plasma prediction, we asked if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the provided code, a random sample of 20 colon cancer plasma, 20 lung cancer plasma, and 30 healthy plasma were used to train an ensemble MARS (Multivariate Adaptive Regression Splines) model using the `earth` R package. 
 
 Run example
 
@@ -251,3 +257,10 @@ Prediction Colon Lung Normal
     Normal    10    5     24
 
 ```
+
+The model related files
+
+1. List of features. The final ensemble model have 154 unique features only: final.marker.list.txt 
+2. Saved Rdata of the ensemble model: final.ensemble.model.Rdata
+
+ 

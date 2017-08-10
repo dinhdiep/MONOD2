@@ -120,6 +120,14 @@ plot.roc <- function(scores, hits, title, max.fdr = 1.0) {
 }
 
 
+# function for getting features
+get.features <- function(earth.model) {
+  feature.idx <- which(sapply(earth.model$namesx.org, function(r) any(grepl(r, rownames(earth.model$coefficients)))))
+  earth.model$namesx.org[feature.idx]
+}
+
+
+
 #### Load matrices and metadata ####
 
 # Load processed and imputed data using an RData file
@@ -219,6 +227,14 @@ rrbs.ensemble.model <- lapply(marker.index, function(idx) {
                nprune = ensemble.model.features, glm = list(family=binomial), linpreds = F)
   mdl
 })
+
+
+final.marker.list <- sort(table(do.call(c, lapply(rrbs.ensemble.model, get.features))))
+write.table(final.marker.list, file="final.marker.list.txt", sep="\t", quote=F)
+
+save(rrbs.ensemble.model, file="final.ensemble.model.Rdata")
+
+
 
 # Test ensemble model on held out test data
 # Creates a list of matrices (samples x tissues) of log-odds for each tissue class

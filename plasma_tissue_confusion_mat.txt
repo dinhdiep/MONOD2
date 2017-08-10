@@ -1,0 +1,4 @@
+"Colon"	"Lung"	"Normal"
+"Colon"	5	4	1
+"Lung"	3	6	0
+"Normal"	10	5	24
