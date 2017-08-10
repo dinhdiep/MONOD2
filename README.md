@@ -48,7 +48,7 @@ The following two software must be installed.
 
 ## Important Notes
 
-MONOD2 is based on the idea described in Guo et al. 2017 Nature Genetics (doi:10.1038/ng.3805). However, we have made modifications from the original methods and codes that was originally hosted on the [Supplementary Website](http://genome-tech.ucsd.edu/public/MONOD_NG_TR44413). A copy of the original processed data, code, and supplementary tables are available here as well in the ng.3805 directory. Some notable modifications are listed below:
+MONOD2 is based on the idea described in Guo et al. 2017 Nature Genetics (doi:10.1038/ng.3805). However, we have made modifications from the original methods and codes that was originally hosted on the [Supplementary Website](http://genome-tech.ucsd.edu/public/MONOD_NG_TR44413). A copy of the original processed data, code, and supplementary tables are available here in the ng.3805 directory. Some notable modifications are listed below:
 
 1. The original code for Figure 2 was not producing the correct values from the Figure. Note that there are two errors in Figure 2 as follows: the epipolymorphism for panel 4 should be 0.9375 (the published figure have 0.375 due to mis-editing), the MHL value for panel 5 should be 0.1167 (the published figure have a rounded up value of 0.1200).  
 
@@ -125,9 +125,9 @@ Run example
 
 We can compare the signal to noise levels between a matrix calculated using the average methylation frequency (AMF) and a matrix calculated using the methylation haplotype load (MHL) to demonstrate the advantage of using MHL on heterogenous samples. The following files are required.
 
-1. WGBS MHL matrix. Example: ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt.gz
-2. WGBS AMF matrix. Example: ng.3805/WGBS.getHaplo.amf.mhbs1.0.rmdup_consistent.useSampleID.txt.gz
-3. List of MHBs overlapping with published DMRs. Example: ng.3805/RRBS_MHBs.sorted.DMR.withID.bed
+1. WGBS MHL matrix. Example: `ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt.gz`
+2. WGBS AMF matrix. Example: `ng.3805/WGBS.getHaplo.amf.mhbs1.0.rmdup_consistent.useSampleID.txt.gz`
+3. List of MHBs overlapping with published DMRs. Example: `ng.3805/RRBS_MHBs.sorted.DMR.withID.bed`
 
 The only requirements for (1) and (2) are that the region indices and the sample IDs are the same between the two matrices. The region file (3) is a list of regions (subset of the region indices used to make the matrices). 
 
@@ -138,17 +138,17 @@ Rscript src/Rcode/mhl_vs_amf.R ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consisten
 
 ```
 
-The output is an Rplots.pdf file that includes two heatmaps similar to Figure 3 from Guo et al. 2017, while subsetting at regions with tissue specific DMRs and also includes a scatteplot showing the relative signal to noise levels for AMF versus MHL.
+The output is an `Rplots.pdf` file that includes two heatmaps similar to Figure 3 from Guo et al. 2017, while subsetting at regions with tissue specific DMRs and also includes a scatteplot showing the relative signal to noise levels for AMF versus MHL.
 
 
 ### Preprocess the data matrices 
 
 Analysis cannot be performed across RRBS and WGBS datasets due to techical artifacts that may bias the results. Therefore we generate two separate matrices, one for each dataset. We then perform data pruning where samples with too few region coverage and regions with too few sample coverage are removed. After pruning, imputation using k-nearest neighbor to fill all the missing values is performed. To run the provided preprocessing script, the following files are required.
 
-1. The metadata for the WGBS tissue samples: ng.3805/WGBS.getHaplo.sampleInfo.txt
-2. The metadata for the RRBS tissue/plasma samples: ng.3805/RRBS.getHaplo.sampleInfo.txt
-3. WGBS MHL matrix: ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt
-4. RRBS MHL matrix: ng.3805/RRBS_170609.gethaplo.mhl.mhbs1.0.useSampleID.txt
+1. The metadata for the WGBS tissue samples: `ng.3805/WGBS.getHaplo.sampleInfo.txt`
+2. The metadata for the RRBS tissue/plasma samples: `ng.3805/RRBS.getHaplo.sampleInfo.txt`
+3. WGBS MHL matrix: `ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consistent.useSampleID.txt`
+4. RRBS MHL matrix: `ng.3805/RRBS_170609.gethaplo.mhl.mhbs1.0.useSampleID.txt`
 
 Usage info
 
@@ -164,7 +164,7 @@ Run example
 
 ```
 
-The output is an R data file named 'wgbs_rrbs_clean.Rdata' and several PDF files showing the data quality.
+The output is an R data file named `wgbs_rrbs_clean.Rdata` and several PDF files showing the data quality.
 
 ### Tumor load estimation
 
@@ -196,13 +196,13 @@ Run example
 
 There should be many simulated files generated including two list files.
 
-1. cct.hapinfo.list_20 
-2. lct.hapinfo.list_20 
+1. `cct.hapinfo.list_20` 
+2. `lct.hapinfo.list_20` 
 
 The should also be three directories which contain simulated data for each sample type.
-1. CCT_simulation 
-2. LCT_simulation 
-3. NCP_simulation
+1. `CCT_simulation` 
+2. `LCT_simulation`
+3. `NCP_simulation`
 
 Next, we can run features selection and tumor load estimation using the simulated data files. The script for tumor load estimation have the following usage.
 
@@ -220,13 +220,13 @@ Run example
 
 The output files are as follows. 
 
-1. The Rdata which saves all the outputs : Tumor_load_estimation.Rdata
-2. Boxplots similar to Figure 4d from Guo et al. 2017 which shows the estimated tumor proportions for the plasma samples: estimated_proportions.pdf
-3. Boxplots similar to Figure 4a,b from Guo et al. 2017 which shows the differential MHL levels in tumor marker regions for different sample types: mhl_boxplot.pdf
-4. Heatmaps similar to Figure 4a,b from Guo et al. 2017 which shows the MHL levels in normal plasma, cancer plasma, and cancer tissues in the tumor marker regions: heatmap.pdf
-5. A table of the standard curve values generated from simulated data: standard_curves_values.txt
-6. A list of lung cancer markers used in the analysis: lung_cancer_markers.txt
-7. A list of colon cancer markers used in the analysis: colon_cancer_markers.txt
+1. The Rdata which saves all the outputs : `Tumor_load_estimation.Rdata`
+2. Boxplots similar to Figure 4d from Guo et al. 2017 which shows the estimated tumor proportions for the plasma samples: `estimated_proportions.pdf`
+3. Boxplots similar to Figure 4a,b from Guo et al. 2017 which shows the differential MHL levels in tumor marker regions for different sample types: `mhl_boxplot.pdf`
+4. Heatmaps similar to Figure 4a,b from Guo et al. 2017 which shows the MHL levels in normal plasma, cancer plasma, and cancer tissues in the tumor marker regions: `heatmap.pdf`
+5. A table of the standard curve values generated from simulated data: `standard_curves_values.txt`
+6. A list of lung cancer markers used in the analysis: `lung_cancer_markers.txt`
+7. A list of colon cancer markers used in the analysis: `colon_cancer_markers.txt`
 
 
 ### Plasma prediction
@@ -240,7 +240,7 @@ Rscript src/Rcode/plasma_prediction.R wgbs_rrbs_clean.Rdata
 
 ```
 
-The resulting AUCs and confusion matrix are printed to screen while AUC curves are generated in an Rplots.pdf file.
+The resulting AUCs and confusion matrix are printed to screen while AUC curves are generated in an `Rplots.pdf` file.
 
 ```RMarkdown
 $mauc
@@ -260,8 +260,8 @@ Prediction Colon Lung Normal
 
 The model related files
 
-1. List of features. The final ensemble model have 154 unique features only: final.marker.list.txt 
-2. Saved Rdata of the final model: final.ensemble.model.Rdata
+1. The final ensemble model have 154 unique features only: `final.marker.list.txt` 
+2. Saved Rdata of the final model: `final.ensemble.model.Rdata`
 
 
 
