@@ -121,6 +121,22 @@ Run example
 
 ```
 
+### Generating the data matrices
+
+First, make a list of paths to haplotype files. The script allows for `AMF`, `MHL`, or `IMF` to be the output metric for the data matrix and a regions definition (BED) file should be provided to make the matrix.
+
+```
+cghap2matrix.sh [list of haplotype files] <AMF|MHL|IMF> [output name prefix] [target bed file]
+
+```
+Run example
+
+```
+./scripts/cghap2matrix.sh example/hapinfo_list MHL chr22 ng.3805/MHBS.txt
+
+```
+Output file would have the extension `mhl.txt`, `amf.txt`, or `imf.txt` depending on the metric specified.
+
 ### Compare AMF versus MHL 
 
 We can compare the signal to noise levels between a matrix calculated using the average methylation frequency (AMF) and a matrix calculated using the methylation haplotype load (MHL) to demonstrate the advantage of using MHL on heterogenous samples. The following files are required.

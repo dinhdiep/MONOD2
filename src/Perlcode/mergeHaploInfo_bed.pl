@@ -26,7 +26,7 @@ my $minLength = 1;
 open(IN, $ARGV[0]) || die("Error opening $ARGV[0]");
 while(my $line = <IN>){
      chomp($line);
-     my @tmp = split "\t", $line;
+     my @tmp = split "[\t\ ]", $line;
      my $index = int($tmp[1]/$windowSize);
      for(my $i = $index - 5; $i <= int($tmp[2]/$windowSize) + 5 ; $i++){
 	push(@{$coverageTable{$tmp[0]}->{$i}}, $tmp[0].":".$tmp[1].":".$tmp[2]);
