@@ -19,7 +19,7 @@ git clone https://github.com/dinhdiep/MONOD2
 
 You can install all the R packages from command line in R with the following code.
 
-```
+```RMarkdown
 require(gplots)
 require(MASS)
 require(pheatmap)
@@ -172,7 +172,7 @@ First, we generate the simulation files by merging a subset of normal plasma dat
 
 The script needs to be modified from within (using a text editor) in order to run user-provided read IDs and BAM files. The following lines as is will perform the analysis on the example read IDs and BAM files. 
 
-```
+```bash
 numsimulation=20 # number of simulations to perform
 n1=1000000 # number of reads per simulation 
  
@@ -242,7 +242,7 @@ Rscript src/Rcode/plasma_prediction.R wgbs_rrbs_clean.Rdata
 
 The resulting AUCs and confusion matrix are printed to screen while AUC curves are generated in an Rplots.pdf file.
 
-```
+```RMarkdown
 $mauc
 [1] 0.7770558
 
