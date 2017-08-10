@@ -138,7 +138,7 @@ Rscript src/Rcode/mhl_vs_amf.R ng.3805/WGBS.getHaplo.mhl.mhbs1.0.rmdup_consisten
 
 ```
 
-The output is an `Rplots.pdf` file that includes two heatmaps similar to Figure 3 from Guo et al. 2017, while subsetting at regions with tissue specific DMRs and also includes a scatteplot showing the relative signal to noise levels for AMF versus MHL.
+The output is an `Rplots.pdf` file that includes two heatmaps similar to Figure 3 from Guo et al. 2017, while subsetting at regions with tissue specific DMRs and also includes a scatterplot showing the relative signal to noise levels for AMF versus MHL.
 
 
 ### Preprocess the data matrices 
@@ -231,7 +231,7 @@ The output files are as follows.
 
 ### Plasma prediction
 
-To perform plasma prediction, we asked if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the provided code, a random sample of 20 colon cancer plasma, 20 lung cancer plasma, and 30 healthy plasma were used to train an ensemble MARS (Multivariate Adaptive Regression Splines) model (R `earth` package). Multiclass prediction is performed by a linear discriminant model on prediction scores. The linear discriminant model was built using the prediction scores of training data. 
+To perform plasma prediction, we ask if plasma samples from healthy individuals, lung cancer patients, and colon cancer patients can be identified from their methylation haplotype load profiles. In the provided code, a random sample of 20 colon cancer plasma, 20 lung cancer plasma, and 30 healthy plasma is used to train an ensemble MARS (Multivariate Adaptive Regression Splines) model (R `earth` package). Multiclass prediction is performed by a linear discriminant model on prediction scores. The linear discriminant model is built using the prediction scores of training data to make multiclass prediction.
 
 Run example
 
@@ -240,7 +240,7 @@ Rscript src/Rcode/plasma_prediction.R wgbs_rrbs_clean.Rdata
 
 ```
 
-The resulting AUCs and confusion matrix are printed to screen while AUC curves are generated in an `Rplots.pdf` file.
+The resulting AUCs and confusion matrix are printed to screen while ROC curves are generated in an `Rplots.pdf` file.
 
 ```RMarkdown
 $mauc
@@ -265,4 +265,3 @@ The model related files
 
 
 
- 
