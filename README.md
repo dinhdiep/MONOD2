@@ -252,7 +252,7 @@ To perform plasma prediction, we asked if plasma samples from healthy individual
 Run example
 
 ```
-Rscript src/Rcode/plasma_prediction.R wgbs_rrbs_clean.Rdata
+Rscript src/Rcode/plasma_prediction_plsda.R wgbs_rrbs_clean.Rdata
 
 ```
 
@@ -266,18 +266,19 @@ $auc
     Colon      Lung    Normal
 0.7250000 0.7505669 0.8556005
 
-          Reference
-Prediction Colon Lung Normal
-    Colon      4    4      2
-    Lung       3    6      0
-    Normal     4    5     30
+
+rrbs.test.labels Colon Lung
+           Colon     7    3
+           Lung      2    7
+
 
 ```
 
 The model related files
 
-1. The final ensemble model has 154 unique features: `final.marker.list.txt` 
-2. Saved Rdata of the final model: `final.ensemble.model.Rdata`
-
+1. The binary ensemble model has 154 unique features: `binary.marker.list.txt` 
+2. Saved Rdata of the final model: `binary.ensemble.model.Rdata`
+3. The tissue origin model has 295 features: `tissue.marker.list.txt`
+4. Saved Rdata of the final plsda model: `tissue_origin.model.Rdata`
 
 

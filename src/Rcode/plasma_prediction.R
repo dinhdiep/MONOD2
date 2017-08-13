@@ -239,8 +239,8 @@ rrbs.train.res <- lapply(1:N.MODELS, function(i) {
 })
 
 combined.train.scores <- Reduce("+", rrbs.train.res)/N.MODELS
-lda.fit <- lda(combined.train.scores, rrbs.train.labels)
-
+lda.fit <- lda(combined.train.scores, rrbs.train.labels, prior = c(1,1,1)/3)
+plot(lda.fit, main="Training data LDA")
 final.marker.list <- sort(table(do.call(c, lapply(rrbs.ensemble.model, get.features))))
 write.table(final.marker.list, file="final.marker.list.txt", sep="\t", quote=F)
 
@@ -274,13 +274,4 @@ tissue.perf <- lapply(colnames(combined.test.scores), function(ts) {
   perf
 })
 names(tissue.perf) <- colnames(combined.test.scores)
-
-lda.test.class <- predict(lda.fit, combined.test.scores)$class
-
-confusion.mat.res <- caret::confusionMatrix(factor(true.labels), factor(lda.test.class))
-confusion.mat <- confusion.mat.res$table
-print(confusion.mat)
-
-write.table(confusion.mat, file = "plasma_tissue_confusion_mat.txt", sep = "\t")
-
 
