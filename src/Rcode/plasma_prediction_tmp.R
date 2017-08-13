@@ -6,6 +6,7 @@ library(ModelMetrics)
 library(caret)
 library(compiler)
 library(ROCR)
+library(impute)
 
 args <- commandArgs(trailingOnly = TRUE)
 rdata.file <- args[1]
@@ -147,14 +148,15 @@ seed <- 348742 # Set random seed for reproducibility
 # keep WGBS samples in the following tissue classes
 keep.tissues <- c('colon', 'lung', 'neural', "heart", "liver", "lung", "pancreas", "stomach")
 wgbs.meta <- orig.data$wgbs.meta[(orig.data$wgbs.meta$Tissue.Type %in% keep.tissues) & (orig.data$wgbs.meta$Type == "normal"),]
-wgbs.dat <- orig.data$wgbs.dat[,wgbs.meta$Sample.ID]
-colnames(wgbs.dat) <- wgbs.meta$Tissue.Type
+tumor.meta <- orig.data$wgbs.meta[ orig.data$wgbs.meta$Type == "cancer" ,]
+wgbs.dat <- orig.data$wgbs.dat[, c(wgbs.meta$Sample.ID, tumor.meta$Sample.ID)]
+colnames(wgbs.dat) <- c(wgbs.meta$Tissue.Type, rep("tumor", nrow(tumor.meta)))
 
 
 # Select the tissue specific features from the WGBS tissue data, ranked by the group specific index (GSI)
-feature.gsi <- gsi(wgbs.dat, min.frac = 0.8) # Calculate GSI for each feature
+feature.gsi <- gsi(wgbs.dat, min.frac = 0.9) # Calculate GSI for each feature
 feature.gsi <- feature.gsi[order(feature.gsi$GSI, decreasing = T),]
-tissue.specific.features <- feature.gsi[1:15000, "region"]
+tissue.specific.features <- feature.gsi[1:30000, "region"]
 
 # Prep RRBS dataset
 rrbs.dat <- t(orig.data$rrbs.dat[, orig.data$rrbs.meta$Type == 'Plasma'])
@@ -181,6 +183,9 @@ rrbs.test.dat <- rrbs.dat[c(ncp.test, ccp.test, lcp.test),]
 rrbs.train.labels <- factor(rrbs.tissue.labels[c(ncp.train, ccp.train, lcp.train)])
 rrbs.test.labels<- factor(rrbs.tissue.labels[c(ncp.test, ccp.test, lcp.test)])
 
+
+############## Binary classification ###################
+########################################################
 
 #### Ensemble model ####
 
@@ -230,22 +235,9 @@ rrbs.ensemble.model <- lapply(marker.index, function(idx) {
 })
 
 
-rrbs.train.res <- lapply(1:N.MODELS, function(i) {
-  idx <- marker.index[[i]]
-  # For each sample, calculate the log-odds of the sample belonging to each tissue type (lung, normal, cancer)
-  test.scores <- predict(rrbs.ensemble.model[[i]], rrbs.train.dat[,idx])
-  rownames(test.scores) <- rownames(rrbs.train.dat)
-  test.scores
-})
-
-combined.train.scores <- Reduce("+", rrbs.train.res)/N.MODELS
-lda.fit <- lda(combined.train.scores, rrbs.train.labels, prior = c(1,1,1)/3)
-plot(lda.fit, main="Training data LDA")
-final.marker.list <- sort(table(do.call(c, lapply(rrbs.ensemble.model, get.features))))
-write.table(final.marker.list, file="final.marker.list.txt", sep="\t", quote=F)
-
-save(rrbs.ensemble.model, lda.fit, file="final.ensemble.model.Rdata")
-
+binary.marker.list <- sort(table(do.call(c, lapply(rrbs.ensemble.model, get.features))))
+write.table(binary.marker.list, file="binary.marker.list.txt", sep="\t", quote=F)
+save(rrbs.ensemble.model, file="binary.ensemble.model.Rdata")
 
 # Test ensemble model on held out test data
 # Creates a list of matrices (samples x tissues) of log-odds for each tissue class
@@ -274,4 +266,65 @@ tissue.perf <- lapply(colnames(combined.test.scores), function(ts) {
   perf
 })
 names(tissue.perf) <- colnames(combined.test.scores)
+
+
+############### Colon versus Lung Only ###############
+######################################################
+
+tissue.specific.features <- feature.gsi[ grep('colon|lung', feature.gsi$group)[1:15000], 'region']
+
+# Prep RRBS dataset
+rrbs.dat <- t(orig.data$rrbs.dat[, orig.data$rrbs.meta$Type == 'Plasma'])
+rrbs.dat <- rrbs.dat[,tissue.specific.features %in% colnames(rrbs.dat)]
+
+rrbs.test.dat <- rrbs.dat[c(ccp.test, lcp.test),]
+
+rrbs.train.dat <- rrbs.dat[c(ccp.train, lcp.train),]
+rrbs.train.labels <- factor(rrbs.tissue.labels[c(ccp.train, lcp.train)])
+
+rrbs.train.dat <- as.data.frame(rrbs.train.dat)
+rrbs.train.dat$tissue <- rrbs.train.labels
+
+#### Ensemble model ####
+
+# Parameters
+ensemble.model.features <- 2 # Number of features to include in each model
+N.MODELS <- 500 # Number of MARS models to include in the ensemble
+n.cluster.features <- 3 # Numbe of feature to sample from each cluster
+n.clusters <- 50 # Number of clusters to segment the features into
+
+# Create a list of features that each ensemble model will be able to use
+set.seed(seed)
+marker.index <- lapply(1:N.MODELS, function(i) {
+  idx <- sample.clusters(skm.res$cluster, k = n.cluster.features, min.cluster.size = 20)
+  idx <- idx[idx %in% colnames(rrbs.train.dat)]
+  idx
+})
+
+
+# Train ensemble model on all training data
+rrbs.ensemble.model <- lapply(marker.index, function(idx) {
+  mdl <- earth(tissue ~ . -tissue, data = rrbs.train.dat[,c(idx, "tissue")], degree = 2, thresh = 0.0001, pmethod = 'backward', trace = 0, 
+               nprune = ensemble.model.features, glm = list(family=binomial), linpreds = F)
+  mdl
+})
+
+final.marker.list <- sort(table(do.call(c, lapply(rrbs.ensemble.model, get.features))))
+fit <- plsda(rrbs.train.dat[, names(final.marker.list)], rrbs.train.labels, probMethod="soft", ncomp=3)
+
+
+write.table(final.marker.list, file="tissue.marker.list.txt", sep="\t", quote=F)
+save(fit, file="tissue_origin.model.Rdata")
+
+# Prep test datasets
+
+dat <- read.table(gzfile('ng.3805/RRBS_170609.gethaplo.mhl.mhbs1.0.useSampleID.txt.gz'),header=T,row=1)
+rrbs.test.raw <- t(dat[names(final.marker.list), rownames(rrbs.test.dat)])
+rrbs.test.imp <- impute.knn(rrbs.test.raw, k=10, rowmax=0.8)$data
+
+rrbs.test.labels<- factor(rrbs.tissue.labels[c(ccp.test, lcp.test)])
+
+# Create confusion matrix for multiclass prediction
+
+table(rrbs.test.labels, predict(fit, rrbs.test.imp[ , names(final.marker.list)]))
 

@@ -148,9 +148,12 @@ seed <- 348742 # Set random seed for reproducibility
 # keep WGBS samples in the following tissue classes
 keep.tissues <- c('colon', 'lung', 'neural', "heart", "liver", "lung", "pancreas", "stomach")
 wgbs.meta <- orig.data$wgbs.meta[(orig.data$wgbs.meta$Tissue.Type %in% keep.tissues) & (orig.data$wgbs.meta$Type == "normal"),]
-wgbs.dat <- orig.data$wgbs.dat[,wgbs.meta$Sample.ID]
-colnames(wgbs.dat) <- wgbs.meta$Tissue.Type
+#tumor.meta <- orig.data$wgbs.meta[ orig.data$wgbs.meta$Type == "cancer" ,]
+#wgbs.dat <- orig.data$wgbs.dat[, c(wgbs.meta$Sample.ID, tumor.meta$Sample.ID)]
+#colnames(wgbs.dat) <- c(wgbs.meta$Tissue.Type, rep("tumor", nrow(tumor.meta)))
 
+wgbs.dat <- orig.data$wgbs.dat[, c(wgbs.meta$Sample.ID)]
+colnames(wgbs.dat) <- c(wgbs.meta$Tissue.Type)
 
 # Select the tissue specific features from the WGBS tissue data, ranked by the group specific index (GSI)
 feature.gsi <- gsi(wgbs.dat, min.frac = 0.8) # Calculate GSI for each feature
