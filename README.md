@@ -33,7 +33,6 @@ require(skmeans)
 require(ModelMetrics)
 require(caret)
 require(ROCR)
-require(gplot2)
 require(reshape)
 require(compiler)
 
