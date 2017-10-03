@@ -1,4 +1,4 @@
-###Step 1. Get MONOD through git
+### Step 1. Get MONOD through git
 
 If you don't already have git, install it with this command:
 
@@ -21,7 +21,7 @@ $ git clone https://github.com/dinhdiep/MONOD2.git
 
 ```
 
-##Step 2. Prepare list of paths to all your BAM files. Below, I have indicated that there are four BAM files in the folder named "BAMfiles" that is located in one directory above. Make sure to provide the correct Linux paths to your BAM files to ensure that they can be found. This software have been tested only on BAM files generated using BisReadMapper, other aligner may result in erroneous methylation haplotype calls.
+### Step 2. Prepare list of paths to all your BAM files. Below, I have indicated that there are four BAM files in the folder named "BAMfiles" that is located in one directory above. Make sure to provide the correct Linux paths to your BAM files to ensure that they can be found. This software have been tested only on BAM files generated using BisReadMapper, other aligner may result in erroneous methylation haplotype calls.
 
 Example list:
 
@@ -33,7 +33,7 @@ Example list:
 
 ```
 
-###Step 3. We have provided a simple getting started script to demonstrate how a pipeline from bam to MHL matrix works. If you want to modify the script to process your own samples, you must make sure the following settings are correct. For examples, the current settings are as follows:
+### Step 3. We have provided a simple getting started script, "getting_started.sh", in the example folder to demonstrate how a pipeline from bam to MHL matrix works. If you want to modify the script to process your own samples, you must make sure the following settings are correct. For examples, the current settings are as follows:
 
 ```
   scripts_dir="../scripts"
