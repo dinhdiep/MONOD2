@@ -35,6 +35,7 @@ require(caret)
 require(ROCR)
 require(reshape)
 require(compiler)
+require(LDheatmap)
 
 ```
 
@@ -88,6 +89,19 @@ Run WGBS example
 ./scripts/bam2cghap_v1.sh WGBS Colon_primary_tumor_sept9_promoter.RD1_80up.genomecov.bed allcpg/cpg.small.txt.gz BAMfiles/Colon_primary_tumor_sept9_promoter.bam test
 
 ```
+
+### Plotting the LD scores for a region 
+
+Inputs are a haploinfo file and the region to be plotted. Output will be a PDF file named as follows: "chromosome,start,end.pdf" 
+
+Run example
+
+```
+./src/Perlcode/hapinfo2LDplot.pl HaploInfo/chr22.sub.hapInfo.txt chr22:16053662-16058136
+
+```
+
+
 
 ### Making mappable bin file
 
