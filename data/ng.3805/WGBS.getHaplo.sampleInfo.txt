@@ -1,0 +1,60 @@
+Sample.ID	File.ID	Study 	Study Accession Project.ID	Disease.Type	Source	Tissue.Type	Tissue age
+SAMN02952114	HCT116.getHaplo.mhbsv2	Blattler et al. 2014	SRP045269	cancer	cell lines	NA	NA
+SAMN00113441	Mobilized_CD34_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	blood	adult
+SAMN02252540	adult_CD14_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	blood	adult
+SAMN02252542	adult_CD3_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	blood	adult
+SAMN02252538	adult_CD56_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	blood	adult
+SAMN02252545	CD19_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	blood	adult
+SAMN02211822	fAdrenal_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	kidney	fetal
+SAMN02252541	fSpinal_Cord_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	neural	fetal
+SAMN02252543	fStomach_cells.getHaplo.mhbsv2	Broad Institute	SRP000996	normal	primary	stomach	fetal
+SAMN03198259	BS.seq.P1.T.getHaplo.mhbsv2	Chen et al. 2016 Cancer Research	SRP049710	cancer	primary	kidney	adult
+SAMN03198263	BS.seq.P2.T.getHaplo.mhbsv2	Chen et al. 2016 Cancer Research	SRP049710	cancer	primary	kidney	adult
+SAMN00709114	new.born.getHaplo.mhbsv2	Heyn et al. 2010	SRP007820	normal	primary	blood	child
+SAMN00709113	centenarian.getHaplo.mhbsv2	Heyn et al. 2010	SRP007820	normal	primary	blood	adult
+SAMN00765484	middle.age.getHaplo.mhbsv2	Heyn et al. 2010	SRP007820	normal	primary	blood	adult
+SAMN02404749	SRX381621_tumor_breast.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	breast	adult
+SAMN02404756	SRX381569_tumor_colon.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	colon	adult
+SAMN02404761	SRX381661_tumor_liver.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	liver	adult
+SAMN02404762	SRX381666_tumor_liver.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	liver	adult
+SAMN02404757	SRX381716_adenocarcinoma_lung.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	lung	adult
+SAMN02404758	SRX381719_squamous_cell_tumor_lung.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	lung	adult
+SAMN02404759	SRX381722_small_cell_tumor_lung.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	lung	adult
+SAMN02404767	SRX381697_tumor_neuroblastoma.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	neural	adult
+SAMN02404768	SRX381701_tumor_glioblastoma.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	neural	adult
+SAMN02404747	SRX381601_tumor_prostate.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	prostate	adult
+SAMN02404764	SRX381678_tumor_prostate.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer	primary	prostate	adult
+SAMN02404748	SRX381611_metastasis_breast.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer metastasis	primary	breast	adult
+SAMN02404755	SRX381585_metastasis_colon.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	cancer metastasis	primary	colon	adult
+SAMN02404753	SRX381725_normal_CD19.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	normal	primary	blood	adult
+SAMN02404754	SRX381553_normal_colon.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	normal	primary	colon	adult
+SAMN02404760	SRX381671_normal_liver.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	normal	primary	liver	adult
+SAMN02404763	SRX381713_normal_lung.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	normal	primary	lung	adult
+SAMN02404750	SRX381693_normal_brain_grey.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	normal	primary	neural	adult
+SAMN02404751	SRX381706_normal_brain_white.getHaplo.mhbsv2	Heyn et al. 2016 Genome Biology	SRP033252	normal	primary	neural	adult
+SAMN00847542	STL003SB.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	colon	adult
+SAMN01737671	STL002SB.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	colon	adult
+SAMN00847543	STL003SG.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	colon	adult
+SAMN00847535	STL003EG.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	esophagus	adult
+SAMN01737667	STL002EG.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	esophagus	adult
+SAMN00847536	STL003FT.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	fat	adult
+SAMN02028527	STL002FT.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	fat	adult
+SAMN00847532	STL001LV.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	heart	child
+SAMN01737664	STL001RV.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	heart	child
+SAMN00847538	STL003LV.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	heart	adult
+SAMN00849928	STL003RV.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	heart	adult
+SAMN00828739	STL003AD.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	kidney	adult
+SAMN01737665	STL002AD.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	kidney	adult
+SAMN01881963	STL011LI.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	liver	adult
+SAMN00849926	STL002LG.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	lung	adult
+SAMN01737669	STL002PA.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	pancreas	adult
+SAMN00847539	STL003PA.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	pancreas	adult
+SAMN01737661	STL001GA.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	stomach	child
+SAMN00849927	STL003GA.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	stomach	adult
+SAMN01737668	STL002GA.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	stomach	adult
+SAMN01737666	STL002AO.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	vessel	adult
+SAMN00847533	STL003AO.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	vessel	adult
+SAMN00847541	STL003RA.01.getHaplo.mhbsv2	Schultz et al. 2015 Nature 	SRP000941	normal	primary	vessel	adult
+SAMN02313886	Colon_Tumor_Primary.getHaplo.mhbsv2	Ziller et al. 2010	SRP028600	cancer	primary	colon	adult
+SAMN02313881	Frontal_cortex_normal_1.getHaplo.mhbsv2	Ziller et al. 2010	SRP028600	normal	primary	neural	adult
+SAMN02313880	Frontal_cortex_normal_2.getHaplo.mhbsv2	Ziller et al. 2010	SRP028600	normal	primary	neural	adult

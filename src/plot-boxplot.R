@@ -1,0 +1,8 @@
+A = read.table("aucs-with2014.txt",F)
+plot.data <- data.frame(values = A$V5, metric = rep(c("Normal vs Cancer", "Colon vs Lung"), nrow(A)/2))
+summary(plot.data$values[which(grepl("Normal", plot.data$metric))])
+summary(plot.data$values[which(grepl("Colon", plot.data$metric))])
+pdf("auc-with2014-boxplots.pdf", width=5, height=5)
+par(cex.axis=1.2)
+boxplot(values ~ metric, plot.data, main="Resampling AUCs (n=50)")
+dev.off()
