@@ -56,9 +56,11 @@ case "$metric" in
 		;;
 	MHL)
 		bin/hapinfo2mhl.pl $update_files_list > $outname.mhl.txt
+		bin/hapinfo2umhl.pl $update_files_list > $outname.umhl.txt
 		;;
 	mhl)
 		bin/hapinfo2mhl.pl $update_files_list > $outname.mhl.txt
+		bin/hapinfo2umhl.pl $update_files_list > $outname.umhl.txt
 		;;
 	IMF)
 		bin/hapinfo2imf.pl $update_files_list > $outname.imf.txt

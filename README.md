@@ -17,6 +17,7 @@ git clone https://github.com/dinhdiep/MONOD2
 
 ## Required R packages
 
+```
 require(MASS)
 require(pheatmap)
 require(RColorBrewer)

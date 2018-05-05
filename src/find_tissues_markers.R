@@ -55,7 +55,7 @@ wgbs.normal_samples.meta$Tissue.Type <- gsub("stomach", "GI", wgbs.normal_sample
 normal_blood_vessel.meta <- wgbs.normal_samples.meta[(wgbs.normal_samples.meta$Tissue.Type == "blood")|(wgbs.normal_samples.meta$Tissue.Type == "vessel"),]
 normal_blood.meta <- wgbs.normal_samples.meta[(wgbs.normal_samples.meta$Tissue.Type == "blood"),]
 
-exclude.samples <- c("SAMN04557041","SAMN04558104","SAMN04557042","SAMN04557043","SAMN04557047","SAMN04557044","SAMN04557045","SAMN04557048","SAMN04557046","SAMN04557049","SAMN02313887","SAMN00849925","SAMN00855407","SAMN01737662","SAMN03198264","SAMN03198265", "SAMN00847541", "SAMN05830182", "SAMN02211821","SAMN02028525", "SAMN05830183","SAMN05830184","SAMN05830186","SAMN05830185","SAMN05830181","SAMN05830187","SAMN04889847","SAMN04889848","SAMN04889843","SAMN04889844","SAMN04889845","SAMN04889846","SAMN04889841","SAMN04889842","SAMN03174086","SAMN03174073","SAMN03174081","SAMN03174075") #  
+exclude.samples <- c("SAMN00847541")
 
 keep.tissues <- c("GI", "neural", "heart", "liver", "pancreas", "kidney", "fat", "lung", "pancreas")
 keep.tissues.meta <- wgbs.normal_samples.meta[((wgbs.normal_samples.meta$Tissue.Type %in% keep.tissues) & !(wgbs.normal_samples.meta$Sample.ID %in% exclude.samples)),]
