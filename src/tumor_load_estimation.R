@@ -1,17 +1,13 @@
 library(ggplot2)
+library(gplots) # required for colorpanel
 
 # This script takes as input the MHL matrix, compute cancer markers using the t-test, build a standard curve from simulated samples, and estimates the cancer proportion in plasma samples using the cancer regions
 
 args <- commandArgs(trailingOnly = TRUE)
 rdata.file <- args[1]
 ncp_train_list <- args[2]
-num.sims <- 20
 bin_dir <- "bin"
-data_dir <- "data/ng.3805"
 result_dir <- "results/tumor_fraction"
-
-# range for standard curve (must match hapinfo list file)
-ct.range <- c("0.20", "0.10", "0.05", "0.01", "0.00")
 
 ######################
 ### PlotFunctions ####
@@ -68,7 +64,7 @@ multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
 # white is NA or missing values
 #
 HeatMap <- function(data) {
-  colors <- colorpanel(75, low = "blue", mid = "yellow", high = "red")
+  colors <- colorpanel(75, low="blue", mid="yellow", high="red")
   sidecol <- function(x){
     x <- as.numeric(as.factor(x))
     col <- rainbow(length(table(colnames(data))))
@@ -87,8 +83,8 @@ HeatMap <- function(data) {
 # Calculate the weighted average scores
 weighted.average.score <- function(x, weight){
 	weight[is.na(x)] <- NA
-	norm.weight <- weight/sum(weight,na.rm = T)
-	score<-sum(x*norm.weight, na.rm = T)
+	norm.weight <- weight/sum(weight,na.rm=T)
+	score<-sum(x*norm.weight, na.rm=T)
 	return(score)
 }
 
@@ -100,7 +96,7 @@ weighted.average.score <- function(x, weight){
 # return.amf.values determines whether the AMF standard curve should be generated
 # markers.info provides the markers information such as loci and weight of each marker
 #
-HaplotypeMixing <- function(range, numSims = 20, mixingHapFiles, simulation.directory, return.amf.values = F) {
+HaplotypeMixing <- function(range, numSims=3, mixingHapFiles, simulation.directory, return.amf.values = F, markers.info) {
   
   MHL.simulatedStdValues <- matrix(nrow = numSims, ncol = length(range))
   colnames(MHL.simulatedStdValues) <- range
@@ -110,7 +106,8 @@ HaplotypeMixing <- function(range, numSims = 20, mixingHapFiles, simulation.dire
   }
 
   # Write possible markers region file
-  markers.file<-"data/ng.3805/MHBS.txt"
+  markers.file<-paste0(simulation.directory, "/markers.possible.txt")
+  write(gsub(":", "\t", rownames(markers.info)), file=markers.file, sep="\n")
 
   # Command to run a perl script to perform hapinfo file merging to subset of markers region
   merge.cmd.part2 <- sprintf(" | perl %s/mergeHaploInfo_bed.pl %s > ", bin_dir, markers.file)
@@ -126,57 +123,25 @@ HaplotypeMixing <- function(range, numSims = 20, mixingHapFiles, simulation.dire
     for(i in c(1:numSims)){
       simulate.name <- paste0(simulation.directory, "/ct_", i, ".hapInfo.txt")
       merge.cmd <- paste0("zcat ", mixingHapFiles$foreground[ hap.ids.list[i] ], " ", mixingHapFiles$background[ hap.ids.list[i] ], merge.cmd.part2, simulate.name)
-      #print(merge.cmd)
       try(system(merge.cmd))
     }
     
     # generate the mixture matrix
-    mhl.matrix.cmd <- sprintf("perl %s/hapinfo2mhl.pl %s/list_hapInfo > %s/simulation.mhl.%s.matrix", bin_dir, simulation.directory, simulation.directory, f) 
-    try(system(mhl.matrix.cmd)) # System call to hapinfo2mhl.pl perl script
-		mhl.matrix.cmd <- sprintf("gzip %s/simulation.mhl.%s.matrix", simulation.directory, f) 
-    try(system(mhl.matrix.cmd)) # System call to gzip matrix
-		
-    if(return.amf.values){
-		  amf.matrix.cmd <- sprintf("perl %s/hapinfo2amf.pl %s/list_hapInfo > %s/simulation.amf.%s.matrix", bin_dir, simulation.directory, simulation.directory, f)
-      try(system(amf.matrix.cmd)) # System call to hapinfo2amf.pl perl script
-			amf.matrix.cmd <- sprintf("gzip %s/simulation.amf.%s.matrix", simulation.directory, f) 
-      try(system(amf.matrix.cmd)) # System call to gzip matrix
-    }
-  }
-}
-
-
-MakeStandardCurves <- function(range, simulation.directory, numSims = 20, return.amf.values = F, markers.info) {
-
-
-  regions <- data.frame( chrom = sapply(strsplit(rownames(markers.info), ":"), function(x) x[1]), 
-                         start = sapply(strsplit(rownames(markers.info), ":"), function(x) x[2]),
-                           end = sapply(strsplit(rownames(markers.info), ":"), function(x) x[3]))
-
-  #regions$end <- as.numeric(as.character(regions$end)) - 1
-  rownames(regions) <- paste0( regions$chrom, ":", regions$start, ":", regions$end )
-  #print(rownames(regions))
-
-  MHL.simulatedStdValues <- matrix(nrow = numSims, ncol = length(range))
-  colnames(MHL.simulatedStdValues) <- range
-  if (return.amf.values) {
-    AMF.simulatedStdValues <- matrix(nrow = numSims, ncol = length(range))
-    colnames(AMF.simulatedStdValues) <- range
-  }
-
-  for(f in range) {
-    matrix.file <- sprintf("%s/simulation.mhl.%s.matrix.gz", simulation.directory, f)
-    mhl <- read.table(gzfile(matrix.file), header = T, row = 1)
-    mhl <- mhl[ rownames(mhl) %in% rownames(regions) , ]
-
-    # compute the mixture scores
-    MHL.simulatedStdValues[ , f] <- as.vector(apply(mhl, 2, function(x) weighted.average.score(x, markers.info$weight)))
+    mhl.matrix.cmd <- sprintf("perl %s/hapinfo2mhl.pl %s/list_hapInfo > %s/simulation.mhl.%s.matrix", bin_dir, simulation.directory, simulation.directory, f)
+    amf.matrix.cmd <- sprintf("perl %s/hapinfo2amf.pl %s/list_hapInfo > %s/simulation.amf.%s.matrix", bin_dir, simulation.directory, simulation.directory, f)
     
-    if(return.amf.values) {
-      matrix.file <- sprintf("%s/simulation.amf.%s.matrix.gz", simulation.directory, f)
-      amf <- read.table(gzfile(matrix.file), header = T, row = 1)
-      amf <- amf[ rownames(amf) %in% rownames(regions) , ]
-      AMF.simulatedStdValues[,f] <- as.vector(apply(amf, 2, function(x) weighted.average.score(x, markers.info$weight)))
+    try(system(mhl.matrix.cmd)) # System call to hapinfo2mhl.pl perl script
+    mhl <- read.table(paste0(simulation.directory,"/simulation.mhl.", f, ".matrix"),T,row=1)
+  
+    # compute the mixture scores
+    MHL.simulatedStdValues[,f] <- as.vector(apply(mhl,2,function(x) weighted.average.score(x,markers.info$weight)))
+    
+    if (return.amf.values) {
+      try(system(amf.matrix.cmd)) # System call to hapinfo2amf.pl perl script
+      amf <- read.table(paste0(simulation.directory,"/simulation.amf.", f, ".matrix"),T,row=1) # subset to only the matching markers regions
+      markers.rows <- match(rownames(markers.info), rownames(amf))
+      amf <- amf[markers.rows,]
+      AMF.simulatedStdValues[,f] <- as.vector(apply(amf,2, function(x) weighted.average.score(x,markers.info$weight)))
     }
   }
   
@@ -188,7 +153,48 @@ MakeStandardCurves <- function(range, simulation.directory, numSims = 20, return
   }
 
   return(res)
+}
 
+# Make standard curves from mixed haplotype matrices
+# range is vector of strings for foreground simulation
+# numSims is the number of simulations
+# mixingHapFiles is a table of the haplotype files for mixing
+# simulation.directory is the directory to store simulation data in
+# return.amf.values determines whether the AMF standard curve should be generated
+# markers.info provides the markers information such as loci and weight of each marker
+#
+MakeStandardCurve <- function(range, numSims=3, simulation.directory, return.amf.values = F, markers.info) {
+  
+  MHL.simulatedStdValues <- matrix(nrow = numSims, ncol = length(range))
+  colnames(MHL.simulatedStdValues) <- range
+  if (return.amf.values) {
+    AMF.simulatedStdValues <- matrix(nrow = numSims, ncol = length(range))
+    colnames(AMF.simulatedStdValues) <- range
+  }
+  
+  # Begin iterating through matrices
+  for(f in range) {
+
+    mhl <- read.table(gzfile(paste0(simulation.directory,"/simulation.mhl.", f, ".matrix.gz")),T,row=1)
+    # compute the mixture scores
+    MHL.simulatedStdValues[,f] <- as.vector(apply(mhl,2,function(x) weighted.average.score(x,markers.info$weight)))
+    
+    if (return.amf.values) {
+      amf <- read.table(gzfile(paste0(simulation.directory,"/simulation.amf.", f, ".matrix.gz")),T,row=1) # subset to only the matching markers regions
+      markers.rows <- match(rownames(markers.info), rownames(amf))
+      amf <- amf[markers.rows,]
+      AMF.simulatedStdValues[,f] <- as.vector(apply(amf,2, function(x) weighted.average.score(x,markers.info$weight)))
+    }
+  }
+  
+  res <- c()
+  res$MHL.simulated <- MHL.simulatedStdValues
+  
+  if (return.amf.values){
+    res$AMF.simulated <- AMF.simulatedStdValues
+  }
+  
+  return(res)
 }
 
 # Estimate cancer fraction from standard curve
@@ -222,6 +228,7 @@ mean.exp <- function(data, samples) {
   return(e)
 }
 
+
 # Returns the markers identified from the tumor samples and normal samples
 identify.tumor.markers <- function(data, tumor.samples, normal.samples, FDR=1e-5, min.diff=0.2){
   ncp.compare.p <- t.test.markers(data, tumor.samples, normal.samples) # one sided t test
@@ -240,14 +247,13 @@ identify.tumor.markers <- function(data, tumor.samples, normal.samples, FDR=1e-5
 
 load(rdata.file)
 
+# Provide paths to simulation files
+
 simulation_CCT_dir <- paste0(result_dir, "/CCT_mixture")
 simulation_LCT_dir <- paste0(result_dir, "/LCT_mixture")
 
 try(system(sprintf("mkdir -p %s", simulation_CCT_dir)))
 try(system(sprintf("mkdir -p %s", simulation_LCT_dir)))
-
-#cct.mixingHapFiles <- read.table(ref_CCT_haploInfo, header=T)
-#lct.mixingHapFiles <- read.table(ref_LCT_haploInfo, header=T)
 
 colon.markers.file.name <- paste0(result_dir, "/colon_cancer_markers.txt")
 lung.markers.file.name <- paste0(result_dir, "/lung_cancer_markers.txt")
@@ -258,6 +264,11 @@ FDR <- 1e-3
 max.plasma.missing <- 0.3
 # Filter fold change of cancer over normal
 min.diff <- 0.3
+
+# number of simulations
+num.sims <- 20
+# range for standard curve (must match hapinfo list file)
+ct.range <- c("0.20", "0.10", "0.05", "0.01", "0.00")
 
 
 rrbs.dat <- orig.data$rrbs.dat
@@ -280,12 +291,12 @@ print(colnames(rrbs.dat)[training.ncp.idx])
 
 # Colon cancer analysis
 colon.markers<-identify.tumor.markers(rrbs.dat, cct.idx, training.ncp.idx, FDR, min.diff) # function to create the markers set
-write.table(colon.markers, file = colon.markers.file.name, sep = '\t', quote=F)
+write.table(colon.markers, file = colon.markers.file.name, sep = "\t", quote=F)
 print(paste("Number of colon tumor markers: ", nrow(colon.markers)))
 
 # Lung cancer analysis
 lung.markers<-identify.tumor.markers(rrbs.dat, lct.idx, training.ncp.idx, FDR, min.diff) # function to create the markers set
-write.table(lung.markers, file = lung.markers.file.name, sep = '\t', quote=F)
+write.table(lung.markers, file = lung.markers.file.name, sep = "\t", quote=F)
 print(paste("Number of lung tumor markers: ", nrow(lung.markers)))
 
 print(paste("False Discovery Rate: ", FDR))
@@ -295,13 +306,18 @@ print(paste("Difference minimum threshold: ", min.diff))
 ##### Simulation######
 ######################
 
-# Perform haplotype mixing and making simulated standard values
-# comment out if matrices were previously generated
-# HaplotypeMixing(range=ct.range, numSims=num.sims, cct.mixingHapFiles, simulation.directory=simulation_CCT_dir, return.amf.values=F)
-# HaplotypeMixing(range=ct.range, numSims=num.sims, lct.mixingHapFiles, simulation.directory=simulation_LCT_dir, return.amf.values=F)
+# Perform haplotype mixing. Note: this step requires large input files, so we use the prepared matrices instead.
+#ref_CCT_haploInfo <- "cct.hapinfo.list20"
+#ref_LCT_haploInfo <- "lct.hapinfo.list20"
+#cct.mixingHapFiles <- read.table(ref_CCT_haploInfo, header=T)
+#lct.mixingHapFiles <- read.table(ref_LCT_haploInfo, header=T)
+#cct.mixing.results <- HaplotypeMixing(range=ct.range, numSims=num.sims, cct.mixingHapFiles, simulation.directory=simulation_CCT_dir, return.amf.values=T, colon.markers)
+#lct.mixing.results <- HaplotypeMixing(range=ct.range, numSims=num.sims, lct.mixingHapFiles, simulation.directory=simulation_LCT_dir, return.amf.values=T, lung.markers)
 
-cct.mixing.results <- MakeStandardCurves(range=ct.range, simulation.directory=simulation_CCT_dir, return.amf.values=F, markers.info=colon.markers)
-lct.mixing.results <- MakeStandardCurves(range=ct.range, simulation.directory=simulation_LCT_dir, return.amf.values=F, markers.info=lung.markers)
+
+# Compute the standard curves from matrices of mixed data
+cct.mixing.results <- MakeStandardCurve(range=ct.range, numSims=num.sims, simulation.directory=simulation_CCT_dir, return.amf.values=T, colon.markers)
+lct.mixing.results <- MakeStandardCurve(range=ct.range, numSims=num.sims, simulation.directory=simulation_LCT_dir, return.amf.values=T, lung.markers)
 
 MHL.simulatedStdValues.colon <- cct.mixing.results$MHL.simulated
 MHL.simulatedStdValues.lung <- lct.mixing.results$MHL.simulated
@@ -310,8 +326,19 @@ MHL.simulatedStdValues.lung <- lct.mixing.results$MHL.simulated
 colon.curve.df <- data.frame(y = as.vector(MHL.simulatedStdValues.colon), x = rep(as.numeric(colnames(MHL.simulatedStdValues.colon)), each = nrow(MHL.simulatedStdValues.colon)))
 lung.curve.df <- data.frame(y = as.vector(MHL.simulatedStdValues.lung), x = rep(as.numeric(colnames(MHL.simulatedStdValues.lung)), each = nrow(MHL.simulatedStdValues.lung)))
 
-print(lm(y ~ x , data=colon.curve.df))
-print(lm(y ~ x , data=lung.curve.df))
+print(paste0("Adjusted r^2 for colon cancer standard curve for MHL: ", summary(lm(y ~ x , data=colon.curve.df))$adj.r.squared))
+print(paste0("Adjusted r^2 for lung cancer standard curve for MHL: ", summary(lm(y ~ x , data=lung.curve.df))$adj.r.squared))
+
+
+AMF.simulatedStdValues.colon <- cct.mixing.results$AMF.simulated
+AMF.simulatedStdValues.lung <- lct.mixing.results$AMF.simulated
+
+# Calculate the R-square
+colon.curve.df <- data.frame(y = as.vector(AMF.simulatedStdValues.colon), x = rep(as.numeric(colnames(AMF.simulatedStdValues.colon)), each = nrow(AMF.simulatedStdValues.colon)))
+lung.curve.df <- data.frame(y = as.vector(AMF.simulatedStdValues.lung), x = rep(as.numeric(colnames(AMF.simulatedStdValues.lung)), each = nrow(AMF.simulatedStdValues.lung)))
+
+print(paste0("Adjusted r^2 for colon cancer standard curve for AMF: ", summary(lm(y ~ x , data=colon.curve.df))$adj.r.squared))
+print(paste0("Adjusted r^2 for lung cancer standard curve for AMF: ", summary(lm(y ~ x , data=lung.curve.df))$adj.r.squared))
 
 
 ######################
@@ -350,9 +377,19 @@ colon.mhl.sem <- apply(MHL.simulatedStdValues.colon,2,function(x)sd(x,na.rm=T)/s
 lung.mhl.avg <- apply(MHL.simulatedStdValues.lung,2,function(x)mean(x,na.rm=T))
 lung.mhl.sem <- apply(MHL.simulatedStdValues.lung,2,function(x)sd(x,na.rm=T)/sqrt(num.sims))
 
-std.curves <- data.frame(colon.mhl.avg, colon.mhl.sem, lung.mhl.avg, lung.mhl.sem)
-rownames(std.curves)<-ct.range
-write.table(std.curves, "results/tumor_fraction/standard_curves_values.txt", quote=F, sep="\t")
+
+mhl.std.curves <- data.frame(avg = c(colon.mhl.avg, lung.mhl.avg), sem = c(colon.mhl.sem, lung.mhl.sem), type = c( rep("CCT", length(ct.range)), rep("LCT", length(ct.range)) ), proportion = rep(as.numeric(ct.range), 2))
+write.table(mhl.std.curves, file = paste0(result_dir, "/standard_curve_values_mhl.txt"), quote = F)
+
+colon.amf.avg <- apply(AMF.simulatedStdValues.colon,2,function(x)mean(x,na.rm=T))
+colon.amf.sem <- apply(AMF.simulatedStdValues.colon,2,function(x)sd(x,na.rm=T)/sqrt(num.sims))
+
+lung.amf.avg <- apply(AMF.simulatedStdValues.lung,2,function(x)mean(x,na.rm=T))
+lung.amf.sem <- apply(AMF.simulatedStdValues.lung,2,function(x)sd(x,na.rm=T)/sqrt(num.sims))
+
+amf.std.curves <- data.frame(avg = c(colon.amf.avg, lung.amf.avg), sem = c(colon.amf.sem, lung.amf.sem), type = c( rep("CCT", length(ct.range)), rep("LCT", length(ct.range)) ), proportion = rep(as.numeric(ct.range), 2))
+write.table(amf.std.curves, file = paste0(result_dir, "/standard_curve_values_amf.txt"), quote = F)
+
 
 # Print fraction of plasma samples out of range of std curve
 print(sum(apply(lung.results, 1, anyNA))/nrow(lung.results))
@@ -384,7 +421,7 @@ table(colnames(lct.matrix))
 dim(lct.matrix)
 
 # Make heatmaps
-pdf("results/tumor_fraction/heatmap.pdf", width = 12, height = 15)
+pdf(paste0(result_dir, "/heatmap.pdf"), width = 12, height = 15)
 HeatMap(cct.matrix)
 HeatMap(lct.matrix)
 dev.off()
@@ -412,43 +449,66 @@ lct.df$Var1 <- NULL
 lct.df <- lct.df[complete.cases(lct.df),]
 
 # Make boxplots
-pdf("results/tumor_fraction/mhl_boxplot.pdf", width = 6, height = 1.5)
+pdf(paste0(result_dir, "/mhl_boxplot.pdf"), width = 3.4, height = 2)
 p1 <- ggplot(cct.df, aes(x = Var2, y = Freq)) + ggtitle("Colon cancer markers") +
-  geom_boxplot(lwd = 0.2, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,0.25)) +
-  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 8, angle=45), axis.text.y = element_text(size = 10), 
-  axis.title.y = element_text(size = 4), panel.border = element_rect(fill = NA))
+  geom_boxplot(lwd = 0.3, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,0.25)) +
+  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 7), 
+        axis.title.y = element_text(size = 7), panel.border = element_rect(fill = NA), axis.line.x = element_blank(), axis.line.y = element_blank(),
+        axis.ticks = element_line(color = "black", size = 0.3), plot.title = element_text(size = 7))
 p2 <- ggplot(cct.df, aes(x = Var2, y = Freq)) + ggtitle("Colon cancer markers") + 
-  geom_boxplot(lwd = 0.2, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,1.00)) +
-  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 8, angle=45), axis.text.y = element_text(size = 10), 
-  axis.title.y = element_text(size = 4), panel.border = element_rect(fill = NA))
+  geom_boxplot(lwd = 0.3, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,1.00)) +
+  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 7), 
+        axis.title.y = element_text(size = 7), panel.border = element_rect(fill = NA), axis.line.x = element_blank(), axis.line.y = element_blank(),
+        axis.ticks = element_line(color = "black", size = 0.3), plot.title = element_text(size = 7))
 
 
 p3<-ggplot(lct.df, aes(x = Var2, y = Freq)) + ggtitle("Lung cancer markers") + 
-  geom_boxplot(lwd = 0.2, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,0.25)) +
-  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 8, angle = 45), axis.text.y = element_text(size = 10),
-        axis.title.y = element_text(size = 4), panel.border = element_rect(fill = NA))
+  geom_boxplot(lwd = 0.3, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,0.25)) +
+  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 7), panel.border = element_rect(fill = NA), axis.line.x = element_blank(), axis.line.y = element_blank(),
+        axis.ticks = element_line(color = "black", size = 0.3), plot.title = element_text(size = 7))
 p4<-ggplot(lct.df, aes(x = Var2, y = Freq)) + ggtitle("Lung cancer markers") + 
-  geom_boxplot(lwd = 0.2, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,1.00)) +
-  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 8, angle = 45), axis.text.y = element_text(size = 10),
-        axis.title.y = element_text(size = 4), panel.border = element_rect(fill = NA))
-multiplot(p1, p2, p3, p4, cols = 4)
+  geom_boxplot(lwd = 0.3, outlier.colour=NA, outlier.size=1) + theme_classic() + guides(fill = F) + ylab("Average MHL") + coord_cartesian(ylim = c(0,1.00)) +
+  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 7),
+        axis.title.y = element_text(size = 7), panel.border = element_rect(fill = NA), axis.line.x = element_blank(), axis.line.y = element_blank(),
+        axis.ticks = element_line(color = "black", size = 0.3), plot.title = element_text(size = 7))
+multiplot(p2, p4, cols = 2)
 dev.off()
 
+# Make the standard curves
+pdf(paste0(result_dir, "/standard_curve.pdf"), width = 2.0 , height = 2.5, useDingbats = FALSE)
+p1 <- ggplot(mhl.std.curves, aes(x=proportion, y=avg, group=type, color=type)) + ylab("Average MHL") + xlab("Proportion of cancer component") +  
+  geom_line(lwd = 0.3) +
+  geom_errorbar(lwd = 0.3, aes(ymin=avg - sem * sqrt(20), ymax=avg+sem * sqrt(20)), width = 0.01, color = "black") +
+  theme_classic() + guides(fill = FALSE) +
+  theme(axis.title.x = element_text(size=7), axis.text.x = element_text(size = 5), axis.text.y = element_text(size = 5),
+        axis.title.y = element_text(size=7), plot.title = element_text(size = 5), axis.line.x = element_line(color="black", size = 0.3), axis.line.y = element_line(color="black", size = 0.3),
+        axis.ticks = element_line(color="black", size=0.3), legend.title=element_blank(), legend.text = element_text(size=5), legend.position = "bottom") +
+  scale_x_reverse( lim=c(0.22,-0.02)) +
+  ylim(0,0.20)
+print(p1)
+dev.off()
+
+
+
 # Make tumor load boxplots
-pdf("results/tumor_fraction/estimated_proportions.pdf", width = 3.0, height = 2.5, useDingbats=FALSE)
-p1 <- ggplot(colon.results, aes(x = groups, y = fitted.values*100, fill = groups))  + ggtitle("Colon tumor markers") +
-  geom_boxplot(lwd = 0.3, outlier.colour=NA) + theme_classic() + scale_fill_manual(values = c("salmon", "salmon", "aquamarine3")) + guides(fill = F) +
+pdf(paste0(result_dir, "/estimated_proportions.pdf"), width = 2.0, height = 2.5, useDingbats=FALSE)
+p1 <- ggplot(colon.results[which(colon.results$groups == "CCP" | colon.results$groups == "NCP"), ], aes(x = groups, y = fitted.values*100, fill = groups))  + ggtitle("Colon tumor markers") +
+  geom_boxplot(lwd = 0.3, outlier.colour=NA) + theme_classic() + scale_fill_manual(values = c("salmon", "aquamarine3")) + guides(fill = F) +
   geom_jitter(shape=16, size = 0.8, position=position_jitter(0.2)) +
-  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 6), axis.text.y = element_text(size = 6),
-        axis.title.y = element_blank()) + 
+  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 7),
+        axis.title.y = element_blank(), plot.title = element_text(size = 7), axis.line.x = element_line(color="black", size = 0.3), axis.line.y = element_line(color="black", size = 0.3),
+        axis.ticks = element_line(color="black", size=0.3)) + 
   ylim(0,10)
 
-p2 <- ggplot(lung.results, aes(x = groups, y = fitted.values*100, fill = groups))  + ggtitle("Lung tumor markers") + 
-  geom_boxplot(lwd = 0.3, outlier.colour=NA) + theme_classic() + scale_fill_manual(values = c("salmon","salmon", "aquamarine3")) + guides(fill = F) +
+p2 <- ggplot(lung.results[which(lung.results$groups == "LCP" | lung.results$groups == "NCP"), ], aes(x = groups, y = fitted.values*100, fill = groups))  + ggtitle("Lung tumor markers") + 
+  geom_boxplot(lwd = 0.3, outlier.colour=NA) + theme_classic() + scale_fill_manual(values = c("salmon", "aquamarine3")) + guides(fill = F) +
   geom_jitter(shape=16, size = 0.8, position=position_jitter(0.2)) +
-  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 6), axis.text.y = element_text(size = 6),
-        axis.title.y = element_blank()) + 
+  theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 7),
+        axis.title.y = element_blank(), plot.title = element_text(size = 7), axis.line.x = element_line(color="black", size = 0.3), axis.line.y = element_line(color="black", size = 0.3),
+        axis.ticks = element_line(color="black", size=0.3)) + 
   ylim(0,10)
 multiplot(p1, p2, cols = 2)
+dev.off()
 
-save.image("results/tumor_fraction/Tumor_load_estimate.RData")
+save.image(paste0(result_dir, "/Tumor_load_estimate.RData"))
