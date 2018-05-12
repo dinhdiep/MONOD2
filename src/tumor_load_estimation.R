@@ -1,5 +1,4 @@
 library(ggplot2)
-library(gplots)
 
 # This script takes as input the MHL matrix, compute cancer markers using the t-test, build a standard curve from simulated samples, and estimates the cancer proportion in plasma samples using the cancer regions
 
@@ -8,6 +7,8 @@ rdata.file <- args[1]
 ncp_train_list <- args[2]
 num.sims <- 20
 bin_dir <- "bin"
+data_dir <- "data/ng.3805"
+result_dir <- "results/tumor_fraction"
 
 # range for standard curve (must match hapinfo list file)
 ct.range <- c("0.20", "0.10", "0.05", "0.01", "0.00")
@@ -152,7 +153,7 @@ MakeStandardCurves <- function(range, simulation.directory, numSims = 20, return
                          start = sapply(strsplit(rownames(markers.info), ":"), function(x) x[2]),
                            end = sapply(strsplit(rownames(markers.info), ":"), function(x) x[3]))
 
-  regions$end <- as.numeric(as.character(regions$end)) - 1
+  #regions$end <- as.numeric(as.character(regions$end)) - 1
   rownames(regions) <- paste0( regions$chrom, ":", regions$start, ":", regions$end )
   #print(rownames(regions))
 
@@ -239,8 +240,8 @@ identify.tumor.markers <- function(data, tumor.samples, normal.samples, FDR=1e-5
 
 load(rdata.file)
 
-simulation_CCT_dir <- "results/tumor_fraction/CCT_mixture"
-simulation_LCT_dir <- "results/tumor_fraction/LCT_mixture"
+simulation_CCT_dir <- paste0(result_dir, "/CCT_mixture")
+simulation_LCT_dir <- paste0(result_dir, "/LCT_mixture")
 
 try(system(sprintf("mkdir -p %s", simulation_CCT_dir)))
 try(system(sprintf("mkdir -p %s", simulation_LCT_dir)))
@@ -248,8 +249,8 @@ try(system(sprintf("mkdir -p %s", simulation_LCT_dir)))
 #cct.mixingHapFiles <- read.table(ref_CCT_haploInfo, header=T)
 #lct.mixingHapFiles <- read.table(ref_LCT_haploInfo, header=T)
 
-colon.markers.file.name<-"results/tumor_fraction/colon_cancer_markers.txt"
-lung.markers.file.name<-"results/tumor_fraction/lung_cancer_markers.txt"
+colon.markers.file.name <- paste0(result_dir, "/colon_cancer_markers.txt")
+lung.markers.file.name <- paste0(result_dir, "/lung_cancer_markers.txt")
 
 # False discovery rate
 FDR <- 1e-3

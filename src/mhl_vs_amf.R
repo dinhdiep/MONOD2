@@ -128,6 +128,8 @@ dmr.bed.file <- "data/ng.3805/RRBS_MHBs.sorted.DMR.withID.bed"
 wgbs_mhl_data <- read.table(gzfile(wgbs.mhl.file), sep = "\t", header = T, row.names = 1)
 wgbs_amf_data <- read.table(gzfile(wgbs.amf.file), sep = "\t", header = T, row.names = 1)
 
+pdf("plots.pdf", width = 5, height = 5)
+
 # Define samples we want to use
 adult_stl_samples <- c('STL002SB.01', 'STL003SB.01', 
                        'STL003SG.01', 'STL002EG.01', 
@@ -213,3 +215,5 @@ ggplot(gg.df, aes(amf_snr, mhl_snr)) + geom_point(col='slateblue') +
    lim = c(0.1, 1.1e3),
    breaks = scales::trans_breaks("log10", function(x) 10^x),
    labels = scales::trans_format("log10", scales::math_format(10^.x)))
+
+dev.off()

@@ -7,7 +7,7 @@ data_dir <- "data/ng.3805"
 
 pdf(paste0(result_dir, "/plasma_prediction_plots.pdf"), width = 3, height = 3)
 
-seed.table <- read.table(paste0(data_dir, "/seed.table.txt"), header = F)$V1[1:1]
+seed.table <- read.table(paste0(data_dir, "/seed.table.txt"), header = F)$V1
 
 normal.vs.cancer.train <- read.table(paste0(data_dir, "/Normal_vs_cancer_train.cancer.samples.txt"), header = T)$x
 normal.vs.cancer.test <- read.table(paste0(data_dir, "/Normal_vs_cancer_test.cancer.samples.txt"), header = T)$x
@@ -15,6 +15,8 @@ colon.vs.lung.train <- read.table(paste0(data_dir, "/Colon_vs_lung_train.types.s
 colon.vs.lung.test <- read.table(paste0(data_dir, "/Colon_vs_lung_test.types.samples.txt"), header = T)$x
 
 args <- commandArgs(trailingOnly = TRUE)
+
+# samples below were removed because of estimated high gDNA content
 
 OUTLIERS <- c( 'NC.P.1.2014', 
           'NC.P.20.2014', 
@@ -132,13 +134,13 @@ pdf(paste0(result_dir, "/Normal_vs_cancer_75pct_split_AUC_plot.pdf"), width=3, h
 plot.roc(roc.res, main = "Normal vs Cancer")
 dev.off()
 
+normal.vs.cancer.auc.table <- rep(NA, length(seed.table))
 for(seed_index in 1:length(seed.table)){
   set.seed(seed.table[seed_index])
   index <- createDataPartition(rrbs.cluster_level.combined.dat$Disease, p=0.75, list=FALSE)
 
   trainSet <- rrbs.cluster_level.combined.dat[ index,]
   testSet <- rrbs.cluster_level.combined.dat[-index,]
-  print(paste0("Normal vs Cancer RF features: ", ncol(trainSet)-1))
 
   metric <- "Accuracy"
   ctrl <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid", classProbs=T, savePredictions = T)
@@ -147,11 +149,10 @@ for(seed_index in 1:length(seed.table)){
 
   #validate on held-out samples
   result.predicted <- predict(rf_gridsearch, testSet) # Prediction
-  confusionMatrix(result.predicted, testSet$Disease)    
 
   result.predicted.prob <- predict(rf_gridsearch, testSet, type='prob') # Prediction
   roc.res <- roc(ifelse(testSet$Disease=="Cancer",1,0), result.predicted.prob[[2]])
-  print(paste0("AUC=", roc.res$auc))
+  normal.vs.cancer.auc.table[seed_index] <- roc.res$auc
 }
 
 
@@ -216,7 +217,7 @@ ctrl <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid", c
 tunegrid <- expand.grid(.mtry=c(1:15))
 rf_gridsearch <- train(Tissue ~ . , data = trainSet,  preProc = c("center", "scale"), method = "rf", metric = metric, tuneGrid = tunegrid, trControl = ctrl)
 
-#validate on held-out samples
+# validate on held-out samples
 result.predicted <- predict(rf_gridsearch, testSet) # Prediction
 confusionMatrix(result.predicted, testSet$Tissue)
 
@@ -227,26 +228,31 @@ pdf(paste0(result_dir, "/Colon_vs_lung_75pct_split_AUC_plot.pdf"), width = 3, he
 plot.roc(roc.res, main = "Colon vs Lung")
 dev.off()
 
-
+colon.vs.lung.auc.table <- rep(NA, length(seed.table))
 for(seed_index in 1:length(seed.table)){
   set.seed(seed.table[seed_index])
   index <- createDataPartition(rrbs.cluster_level.combined.dat$Tissue, p = 0.75, list = FALSE)
    
   trainSet <- rrbs.cluster_level.combined.dat[ index,] 
   testSet <- rrbs.cluster_level.combined.dat[ - index,] 
-  print(paste0("Colon vs Lung RF features: ", ncol(trainSet) - 1))
     
   metric <- "Accuracy"
   ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 3, search = "grid", classProbs  = T, savePredictions = T)
   tunegrid <- expand.grid(.mtry=c(1:15))
   rf_gridsearch <- train(Tissue ~ . , data = trainSet,  preProc = c("center", "scale"), method = "rf", metric = metric, tuneGrid = tunegrid, trControl = ctrl)
 
-  #validate on held-out samples
+  # validate on held-out samples
   result.predicted <- predict(rf_gridsearch, testSet) # Prediction
-  print(confusionMatrix(result.predicted, testSet$Tissue))    
 
   result.predicted.prob <- predict(rf_gridsearch, testSet, type='prob') # Prediction
   roc.res <- roc(ifelse(testSet$Tissue == "Lung", 1, 0), result.predicted.prob[[2]])
-  print(paste0("AUC=", roc.res$auc))
+  colon.vs.lung.auc.table[seed_index] <- roc.res$auc
 }
+
+# make Figure 8C
+auc.table <- data.frame(resampling_aucs = c(normal.vs.cancer.auc.table, colon.vs.lung.auc.table), prediction_test = c( rep("Normal vs cancer", length(seed.table)), rep("Colon vs Lung", length(seed.table))))
+write.table(auc.table, file = paste0(result_dir, "/auc_table.txt"), quote = F, sep = ",")
+auc.table$prediction_test <- factor(auc.table$prediction_test, levels=c("Normal vs cancer", "Colon vs Lung"))
+boxplot(resampling_aucs ~ prediction_test, auc.table, main = paste0("Resampling AUCs (n=", length(seed.table), ")"))
+dev.off()
 
