@@ -392,6 +392,7 @@ write.table(amf.std.curves, file = paste0(result_dir, "/standard_curve_values_am
 
 
 # Print fraction of plasma samples out of range of std curve
+print("Number of samples out of range or too low of standard curve:")
 print(sum(apply(lung.results, 1, anyNA))/nrow(lung.results))
 print(sum(apply(colon.results, 1, anyNA))/nrow(colon.results))
 
@@ -402,6 +403,15 @@ lung.results$fitted.values[which(lung.results$mhl.average < min(lung.mhl.avg))] 
 # test for significance of difference
 t.test(colon.results$fitted.values[which(colon.results$groups=="CCP")], colon.results$fitted.values[which(colon.results$groups=="NCP")], alternative="greater")
 t.test(lung.results$fitted.values[which(lung.results$groups=="LCP")], lung.results$fitted.values[which(lung.results$groups=="NCP")], alternative="greater")
+
+print("Boxplot summary of fitted values for colon markers, CCP:")
+print(summary(colon.results$fitted.values[which(colon.results$groups=="CCP")]))
+print("Boxplot summary of fitted values for colon markers, NCP:")
+print(summary(colon.results$fitted.values[which(colon.results$groups=="NCP")]))
+print("Boxplot summary of fitted values for lung markers, LCP:")
+print(summary(lung.results$fitted.values[which(lung.results$groups=="LCP")]))
+print("Boxplot summary of fitted values for lung markers, NCP:")
+print(summary(lung.results$fitted.values[which(lung.results$groups=="NCP")]))
 
 
 # match marker regions to subset
@@ -447,6 +457,15 @@ t.test(lct.matrix.mean$LCP, lct.matrix.mean$NCP, alternative = "greater", var.eq
 lct.df <- as.data.frame.table(as.matrix(lct.matrix.mean))
 lct.df$Var1 <- NULL
 lct.df <- lct.df[complete.cases(lct.df),]
+
+print("Size of markers matrix for colon cancer:")
+print(dim(cct.matrix.mean))
+print("Size of markers matrix for lung cancer:")
+print(dim(lct.matrix.mean))
+print("Summary of markers matrix for colon cancer:")
+print(summary(cct.matrix.mean))
+print("Summary of markers matrix for lung cancer:")
+print(summary(lct.matrix.mean))
 
 # Make boxplots
 pdf(paste0(result_dir, "/mhl_boxplot.pdf"), width = 3.4, height = 2)
@@ -499,7 +518,7 @@ p1 <- ggplot(colon.results[which(colon.results$groups == "CCP" | colon.results$g
   theme(axis.title.x=element_blank(), axis.text.x = element_text(size = 7), axis.text.y = element_text(size = 7),
         axis.title.y = element_blank(), plot.title = element_text(size = 7), axis.line.x = element_line(color="black", size = 0.3), axis.line.y = element_line(color="black", size = 0.3),
         axis.ticks = element_line(color="black", size=0.3)) + 
-  ylim(0,10)
+  ylim(0,20)
 
 p2 <- ggplot(lung.results[which(lung.results$groups == "LCP" | lung.results$groups == "NCP"), ], aes(x = groups, y = fitted.values*100, fill = groups))  + ggtitle("Lung tumor markers") + 
   geom_boxplot(lwd = 0.3, outlier.colour=NA) + theme_classic() + scale_fill_manual(values = c("salmon", "aquamarine3")) + guides(fill = F) +
