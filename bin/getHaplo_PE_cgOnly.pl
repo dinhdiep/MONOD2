@@ -46,9 +46,9 @@ sub main{
 	readCGTable($ARGV[1]);
         my $bamfile = $ARGV[0];
 	my $start_time = time;
-	my $TEMP_PREFIX = $ARGV[2];
+	my $TEMP_PREFIX2 = $ARGV[2];
 	my ($last_list_pos, $last_list_calls, $last_id, $last_chr) = ("NA", "NA", "NA", "NA");
-        open(INFILE, "$samtools sort -T $TEMP_PREFIX -@ 4 -n -O SAM $bamfile |") || die("Error running samtools to convert BAM file\n");
+        open(INFILE, "$samtools sort -T $TEMP_PREFIX2 -@ 4 -n -O SAM $bamfile |") || die("Error running samtools to convert BAM file\n");
 	while(my $line = <INFILE>){
 		next if($line =~ m/^@/);
 		chomp($line);
