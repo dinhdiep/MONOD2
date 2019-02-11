@@ -95,7 +95,7 @@ Inputs are a haploinfo file and the region to be plotted. Output will be a PDF f
 Run example
 
 ```
-./bin/hapinfo2LDplot.pl results/HaploInfo/chr22.sub.hapInfo.txt chr22:16053662-16058136
+./bin/hapinfo2LDplot_signed.pl results/HaploInfo/chr22.sub.hapInfo.txt chr22:16053662-16058136
 
 ```
 
